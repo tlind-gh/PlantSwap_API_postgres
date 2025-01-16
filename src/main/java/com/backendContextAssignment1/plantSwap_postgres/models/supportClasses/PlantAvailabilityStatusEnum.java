@@ -1,5 +1,5 @@
 package com.backendContextAssignment1.plantSwap_postgres.models.supportClasses;
 
-public enum PlantAvailabilityStatus {
+public enum PlantAvailabilityStatusEnum {
     AVAILABLE, RESERVED, NOT_AVAILABLE
 }

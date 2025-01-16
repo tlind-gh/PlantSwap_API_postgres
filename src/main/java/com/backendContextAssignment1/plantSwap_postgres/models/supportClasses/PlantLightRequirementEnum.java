@@ -1,5 +1,5 @@
 package com.backendContextAssignment1.plantSwap_postgres.models.supportClasses;
 
-public enum PlantTypeEnum {
-    SEED, SPROUT, PLANT, OTHER
+public enum PlantLightRequirementEnum {
+    HIGH, MEDIUM, LOW, UNKNOWN
 }

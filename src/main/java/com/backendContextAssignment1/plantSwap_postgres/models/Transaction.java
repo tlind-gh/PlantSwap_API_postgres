@@ -1,6 +1,6 @@
 package com.backendContextAssignment1.plantSwap_postgres.models;
 
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatus;
+import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatusEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -22,18 +22,18 @@ public class Transaction {
     @JoinColumn(name = "user_buyer_id", nullable = false)
     private User buyer_user_id;
     //notnull
-    private TransactionStatus status;
+    private TransactionStatusEnum status;
     @Column(length = 1000)
     private String swap_offer;
     //notnull
-    private LocalDate created_at;
-    private LocalDate updated_at;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
     public Transaction() {
         //set IF plant_id Plant has price, status= ACCEPTED, swapOffer must be null,
         //IF price = null, swapOffer must not be null and status = swap_pending.
-        created_at = LocalDate.now();
-        updated_at = null;
+        createdAt = LocalDate.now();
+        updatedAt = null;
     }
 
 }

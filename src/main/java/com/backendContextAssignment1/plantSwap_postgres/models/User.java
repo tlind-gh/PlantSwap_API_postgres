@@ -14,12 +14,12 @@ public class User {
         private String username;
         //notnull, match pattern, hash and salt
         private String password;
-        private LocalDate created_at;
-        private LocalDate updated_at;
+        private LocalDate createdAt;
+        private LocalDate updatedAt;
 
         public User() {
-            created_at = LocalDate.now();
-            updated_at = null;
+            createdAt = LocalDate.now();
+            updatedAt = null;
         }
 
     public long getId() {
@@ -43,17 +43,16 @@ public class User {
         this.password = password;
     }
 
-    public LocalDate getCreated_at() {
-        return created_at;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-
-    public LocalDate getUpdated_at() {
-        return updated_at;
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(LocalDate updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdated_at(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
 
