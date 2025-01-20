@@ -1,7 +1,8 @@
 package com.backendContextAssignment1.plantSwap_postgres.controllers;
 
+import com.backendContextAssignment1.plantSwap_postgres.Services.UserService;
 import com.backendContextAssignment1.plantSwap_postgres.models.User;
-import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +12,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     //add @Valid
     //add error handling if all required fields are in not in the request body
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
 
         /* comment: EXAMPLE from bookShop w. mongodb -> change code to fit here.
         if(user.getAuthor() != null) {
@@ -35,6 +36,6 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUser() {
-        return ResponseEntity.ok(userRepository.findAll());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }
