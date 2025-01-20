@@ -1,5 +1,5 @@
 package com.backendContextAssignment1.plantSwap_postgres.models.supportClasses;
 
 public enum PlantSizeEnum {
-    SMALL, MEDIUM, LARGE, NOT_APPLICABLE
+    SMALL, MEDIUM, LARGE, UNSPECIFIED
 }

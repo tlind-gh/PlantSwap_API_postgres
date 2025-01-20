@@ -15,6 +15,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        if (user.getUpdatedAt() != null) {
+            throw new IllegalArgumentException("cannot input value for update_at for a new user");
+        }
         return userRepository.save(user);
     }
 
