@@ -3,6 +3,7 @@ package com.backendContextAssignment1.plantSwap_postgres.models;
 import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -47,7 +48,7 @@ public class Plant {
 
     @Column(name = "care_difficulty", nullable = false)
     @NotNull(message = "care_difficulty cannot be null")
-    @Max(value = 1, message = "care_difficulty must be a value between 1 and 5")
+    @Min(value = 1, message = "care_difficulty must be a value between 1 and 5")
     @Max(value = 5, message = "care_difficulty must be a value between 1 and 5")
     private int careDifficulty;
 
@@ -158,13 +159,13 @@ public class Plant {
     }
 
     @NotNull(message = "care_difficulty cannot be null")
-    @Max(value = 1, message = "care_difficulty must be a value between 1 and 5")
+    @Min(value = 1, message = "care_difficulty must be a value between 1 and 5")
     @Max(value = 5, message = "care_difficulty must be a value between 1 and 5")
     public int getCareDifficulty() {
         return careDifficulty;
     }
 
-    public void setCareDifficulty(@NotNull(message = "care_difficulty cannot be null") @Max(value = 1, message = "care_difficulty must be a value between 1 and 5") @Max(value = 5, message = "care_difficulty must be a value between 1 and 5") int careDifficulty) {
+    public void setCareDifficulty(@NotNull(message = "care_difficulty cannot be null") @Min(value = 1, message = "care_difficulty must be a value between 1 and 5") @Max(value = 5, message = "care_difficulty must be a value between 1 and 5") int careDifficulty) {
         this.careDifficulty = careDifficulty;
     }
 
