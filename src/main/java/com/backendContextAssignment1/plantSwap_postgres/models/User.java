@@ -1,6 +1,7 @@
 package com.backendContextAssignment1.plantSwap_postgres.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -22,14 +23,13 @@ public class User {
     @Column(name = "password", length = 50, nullable = false)
     @NotNull(message = "password cannot be null")
     @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long")
-    //also needs to be HASHED and SALTED!!
+    @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit")
     private String password;
 
     @Column(name = "email", unique = true, length = 200, nullable = false)
     @NotNull(message = "email cannot be null")
     @Size(min = 1, max = 200, message = "email must be between 1 and 50 characters long")
-    //email must have a series of numbers/letter/underscore/hyphons + an @ + another series of numbers/letter/underscore/hyphons
-    @Pattern(regexp = "^[\\w.-]+@[\\w.-]+$", message = "email address does not have a valid format")
+    @Email(message = "email address does not have a valid format")
     private String email;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -58,19 +58,19 @@ public class User {
         this.username = username;
     }
 
-    public @NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") String getPassword() {
+    public @NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") String password) {
+    public void setPassword(@NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String password) {
         this.password = password;
     }
 
-    public @NotNull(message = "email cannot be null") @Size(min = 1, max = 200, message = "email must be between 1 and 50 characters long") @Pattern(regexp = "^[\\w.-]+@[\\w.-]+$", message = "email address does not have a valid format") String getEmail() {
+    public @NotNull(message = "email cannot be null") @Size(min = 1, max = 200, message = "email must be between 1 and 50 characters long") @Email(message = "email address does not have a valid format") String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotNull(message = "email cannot be null") @Size(min = 1, max = 200, message = "email must be between 1 and 50 characters long") @Pattern(regexp = "^[\\w.-]+@[\\w.-]+$", message = "email address does not have a valid format") String email) {
+    public void setEmail(@NotNull(message = "email cannot be null") @Size(min = 1, max = 200, message = "email must be between 1 and 50 characters long") @Email(message = "email address does not have a valid format") String email) {
         this.email = email;
     }
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/plants")
@@ -21,15 +22,6 @@ public class PlantController {
     @PostMapping
     public ResponseEntity<Plant> addPlant(@Valid @RequestBody Plant plant) {
         return ResponseEntity.status(HttpStatus.CREATED).body(plantService.createPlant(plant));
-
-        /* comment: EXAMPLE from bookShop w. mongodb -> change code to fit here.
-        if(user.getAuthor() != null) {
-            Author author = authorRepository.findById(book.getAuthor().getId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Author not found"));
-            book.setAuthor(author);
-        }
-    */
     }
 
     @GetMapping
@@ -37,4 +29,14 @@ public class PlantController {
         return ResponseEntity.ok(plantService.getAllPlants());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Plant>> getPlantById(@PathVariable Long id) {
+        return ResponseEntity.ok(plantService.getPlantById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlantById(@PathVariable Long id) {
+        plantService.deletePlantById(id);
+        return ResponseEntity.noContent().build();
+    }
 }

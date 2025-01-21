@@ -5,6 +5,7 @@ import com.backendContextAssignment1.plantSwap_postgres.repositories.UserReposit
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,5 +24,19 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Id does not correspond to any existing user");
+        }
+            return userRepository.findById(id);
+    }
+
+    public void deleteUserById(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Id does not correspond to any existing user");
+        }
+        userRepository.deleteById(id);
     }
 }

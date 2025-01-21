@@ -21,7 +21,7 @@ public class Plant {
     //not nullable
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull(message = "user_id cannot be null")
-    private User user_id;
+    private User user;
 
     @Column(name = "common_name", nullable = false, length = 50)
     @NotNull(message = "common_name cannot be null")
@@ -110,12 +110,12 @@ public class Plant {
         return id;
     }
 
-    public @NotNull(message = "user_id cannot be null") User getUser_id() {
-        return user_id;
+    public @NotNull(message = "user_id cannot be null") User getUser() {
+        return user;
     }
 
-    public void setUser_id(@NotNull(message = "user_id cannot be null") User user_id) {
-        this.user_id = user_id;
+    public void setUser(@NotNull(message = "user_id cannot be null") User user) {
+        this.user = user;
     }
 
     public @NotNull(message = "common_name cannot be null") @Size(min = 1, max = 50, message = "common_name must between 8 and 50 characters long") String getCommonName() {
