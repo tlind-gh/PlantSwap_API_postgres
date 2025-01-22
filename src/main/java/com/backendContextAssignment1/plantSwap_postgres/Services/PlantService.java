@@ -7,7 +7,6 @@ import com.backendContextAssignment1.plantSwap_postgres.repositories.UserReposit
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlantService {
@@ -39,9 +38,8 @@ public class PlantService {
         return plantRepository.findAll();
     }
 
-    public Optional<Plant> getPlantById(Long id) {
-        validatePlantId(id);
-        return plantRepository.findById(id);
+    public Plant getPlantById(Long id) {
+        return validatePlantIdAndReturnPlant(id);
     }
 
     public List<Plant> getAvailablePlants() {
@@ -49,13 +47,13 @@ public class PlantService {
     }
 
     public void deletePlantById(Long id) {
-        validatePlantId(id);
+        validatePlantIdAndReturnPlant(id);
         plantRepository.deleteById(id);
     }
 
-    private void validatePlantId(Long id) {
-        if (!plantRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing plant");
-        }
+    private Plant validatePlantIdAndReturnPlant(Long id) {
+        return plantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing plant"));
+
     }
 }

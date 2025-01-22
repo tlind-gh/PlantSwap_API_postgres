@@ -33,7 +33,6 @@ public class User {
     private String email;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @NotNull(message = "created_at cannot be null")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
@@ -74,8 +73,12 @@ public class User {
         this.email = email;
     }
 
-    public @NotNull(message = "created_at cannot be null") LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {

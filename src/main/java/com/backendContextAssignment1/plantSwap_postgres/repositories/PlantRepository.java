@@ -6,11 +6,10 @@ import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.Pl
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PlantRepository  extends JpaRepository<Plant, Long> {
 
-    List<Plant> findByUser(Optional<User> user);
+    List<Plant> findByUser(User user);
     List<Plant> findByAvailabilityStatus(PlantAvailabilityStatusEnum availabilityStatus);
     List<Plant> findByUserAndAvailabilityStatus(User user, PlantAvailabilityStatusEnum availabilityStatus);
 }

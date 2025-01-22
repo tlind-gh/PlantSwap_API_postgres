@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionService {
@@ -67,26 +66,22 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public Optional<Transaction> getTransactionById(Long id) {
-        validateTransactionId(id);
-        return transactionRepository.findById(id);
+    public Transaction getTransactionById(Long id) {
+        return validateTransactionIdAndReturnTransaction(id);
     }
 
-    public List<Transaction> getTransactionsByUserId(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing user");
-        }
-        return transactionRepository.findByBuyer(userRepository.findById(id));
+    public List<Transaction> getTransactionsByUserId(Long userId) {
+        return transactionRepository.findByBuyer(userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing user")));
     }
 
     public void deleteTransactionById(Long id) {
-        validateTransactionId(id);
+        validateTransactionIdAndReturnTransaction(id);
         transactionRepository.deleteById(id);
     }
 
-    private void validateTransactionId(Long id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing transaction");
-        }
+    private Transaction validateTransactionIdAndReturnTransaction(Long id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing transaction"));
     }
 }

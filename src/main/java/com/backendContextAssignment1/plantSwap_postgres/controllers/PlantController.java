@@ -30,7 +30,7 @@ public class PlantController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Plant>> getPlantById(@PathVariable Long id) {
+    public ResponseEntity<Plant> getPlantById(@PathVariable Long id) {
         return ResponseEntity.ok(plantService.getPlantById(id));
     }
 

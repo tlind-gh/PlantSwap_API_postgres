@@ -6,8 +6,8 @@ import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantReposi
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,9 +20,8 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (user.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("cannot input value for update_at for a new user");
-        }
+        validateUserRequestBody(user);
+        user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
@@ -30,24 +29,37 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {
-        validateUserId(id);
-        return userRepository.findById(id);
+    public User getUserById(Long id) {
+        return validateUserIdAndReturnUser(id);
     }
 
     public List<Plant> getPlantsByUserId(Long id) {
-        validateUserId(id);
-        return plantRepository.findByUser(userRepository.findById(id));
+        return plantRepository.findByUser(validateUserIdAndReturnUser(id));
     }
 
     public void deleteUserById(Long id) {
-        validateUserId(id);
+        validateUserIdAndReturnUser(id);
         userRepository.deleteById(id);
     }
 
-    void validateUserId(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing user");
+    public User updateUser(Long id, User user) {
+        User existingUser = validateUserIdAndReturnUser(id);
+        validateUserRequestBody(user);
+        existingUser.setUsername(user.getUsername());
+        existingUser.setPassword(user.getPassword());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(existingUser);
+    }
+
+    private User validateUserIdAndReturnUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing user"));
+    }
+
+    private void validateUserRequestBody(User user) {
+        if (user.getUpdatedAt() != null || user.getCreatedAt() != null) {
+            throw new IllegalArgumentException("cannot input value for created_at or update_at");
         }
     }
 }
