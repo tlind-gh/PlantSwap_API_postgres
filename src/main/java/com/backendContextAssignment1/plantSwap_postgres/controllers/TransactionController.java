@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/tranactions")
+@RequestMapping("/api/transactions")
 public class TransactionController {
     private final TransactionService transactionService;
 
@@ -36,7 +36,7 @@ public class TransactionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
-        transactionService.deleteTransactionById(id);
+            transactionService.deleteTransactionById(id);
         return ResponseEntity.noContent().build();
     }
 }

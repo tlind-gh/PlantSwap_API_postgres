@@ -17,14 +17,14 @@ public class Transaction {
     //not nullable
     @JoinColumn(name = "plant_id", nullable = false)
     @NotNull(message = "plant_id cannot be null")
-    private Plant plantID;
+    private Plant plant;
 
     //one user can have more than one transaction
     @ManyToOne(fetch = FetchType.EAGER)
     //not nullable
     @JoinColumn(name = "buyer_id", nullable = false)
-    @NotNull(message = "plant_id cannot be null")
-    private User buyerID;
+    @NotNull(message = "buyer_id cannot be null")
+    private User buyer;
 
     @Column(name = "status", nullable = false)
     @NotNull(message = "status cannot be null")
@@ -49,20 +49,20 @@ public class Transaction {
         return id;
     }
 
-    public @NotNull(message = "plant_id cannot be null") Plant getPlantID() {
-        return plantID;
+    public @NotNull(message = "plant_id cannot be null") Plant getPlant() {
+        return plant;
     }
 
-    public void setPlantID(@NotNull(message = "plant_id cannot be null") Plant plantID) {
-        this.plantID = plantID;
+    public void setPlant(@NotNull(message = "plant_id cannot be null") Plant plant) {
+        this.plant = plant;
     }
 
-    public @NotNull(message = "plant_id cannot be null") User getBuyerID() {
-        return buyerID;
+    public @NotNull(message = "plant_id cannot be null") User getBuyer() {
+        return buyer;
     }
 
-    public void setBuyerID(@NotNull(message = "plant_id cannot be null") User buyerID) {
-        this.buyerID = buyerID;
+    public void setBuyer(@NotNull(message = "plant_id cannot be null") User buyer) {
+        this.buyer = buyer;
     }
 
     public @NotNull(message = "status cannot be null") TransactionStatusEnum getStatus() {
