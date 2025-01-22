@@ -34,6 +34,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    /*
+    @GetMapping("/{id}/plants")
+    public ResponseEntity<List<Plant>> getUserPlants(@PathVariable Long id) {
+        //return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);

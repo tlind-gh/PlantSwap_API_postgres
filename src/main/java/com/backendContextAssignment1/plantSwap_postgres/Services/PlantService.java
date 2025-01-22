@@ -1,6 +1,7 @@
 package com.backendContextAssignment1.plantSwap_postgres.Services;
 
 import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
+import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -36,16 +37,22 @@ public class PlantService {
     }
 
     public Optional<Plant> getPlantById(Long id) {
-        if (!plantRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing plant");
-        }
+        validatePlantId(id);
         return plantRepository.findById(id);
     }
 
+    public List<Plant> getAvailablePlants() {
+        return plantRepository.findByAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
+    }
+
     public void deletePlantById(Long id) {
+        validatePlantId(id);
+        plantRepository.deleteById(id);
+    }
+
+    private void validatePlantId(Long id) {
         if (!plantRepository.existsById(id)) {
             throw new IllegalArgumentException("Id does not correspond to any existing plant");
         }
-        plantRepository.deleteById(id);
     }
 }

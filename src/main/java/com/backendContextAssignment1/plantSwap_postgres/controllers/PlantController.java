@@ -34,6 +34,11 @@ public class PlantController {
         return ResponseEntity.ok(plantService.getPlantById(id));
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<Plant>> getAvailablePlants() {
+        return ResponseEntity.ok(plantService.getAvailablePlants());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlantById(@PathVariable Long id) {
         plantService.deletePlantById(id);
