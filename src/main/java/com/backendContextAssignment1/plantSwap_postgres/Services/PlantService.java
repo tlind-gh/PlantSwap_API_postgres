@@ -29,6 +29,9 @@ public class PlantService {
         if (!userRepository.existsById(plant.getUser().getId())) {
             throw new IllegalArgumentException("user_id does not correspond to any existing user");
         }
+        if (plantRepository.findByUserAndAvailabilityStatus(plant.getUser(), PlantAvailabilityStatusEnum.AVAILABLE).size() >= 10) {
+            throw new IllegalArgumentException("user already has 10 available plants in database no new plants can be added for this user");
+        }
         return plantRepository.save(plant);
     }
 

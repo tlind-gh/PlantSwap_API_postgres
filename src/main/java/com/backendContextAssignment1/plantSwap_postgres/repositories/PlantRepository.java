@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface PlantRepository  extends JpaRepository<Plant, Long> {
 
-    List<Plant> findByAvailabilityStatus(PlantAvailabilityStatusEnum availabilityStatus);
     List<Plant> findByUser(Optional<User> user);
+    List<Plant> findByAvailabilityStatus(PlantAvailabilityStatusEnum availabilityStatus);
+    List<Plant> findByUserAndAvailabilityStatus(User user, PlantAvailabilityStatusEnum availabilityStatus);
 }

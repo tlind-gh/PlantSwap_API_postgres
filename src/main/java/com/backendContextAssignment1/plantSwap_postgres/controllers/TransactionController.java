@@ -35,8 +35,8 @@ public class TransactionController {
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(transactionService.getTransactionByUserId(userId));
+    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getTransactionsByUserId(id));
     }
 
     @DeleteMapping("/{id}")

@@ -63,7 +63,7 @@ public class TransactionService {
         return transactionRepository.findById(id);
     }
 
-    public List<Transaction> getTransactionByUserId(Long id) {
+    public List<Transaction> getTransactionsByUserId(Long id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("Id does not correspond to any existing user");
         }
