@@ -23,7 +23,7 @@ public class User {
     @Column(name = "password", length = 50, nullable = false)
     @NotNull(message = "password cannot be null")
     @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long")
-    @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit")
     private String password;
 
     @Column(name = "email", unique = true, length = 200, nullable = false)
@@ -58,11 +58,11 @@ public class User {
         this.username = username;
     }
 
-    public @NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String getPassword() {
+    public @NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String password) {
+    public void setPassword(@NotNull(message = "password cannot be null") @Size(min = 1, max = 50, message = "password must between 8 and 50 characters long") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "password must contain minimum 1 uppercase letter, 1 lowercase letter and 1 digit") String password) {
         this.password = password;
     }
 
