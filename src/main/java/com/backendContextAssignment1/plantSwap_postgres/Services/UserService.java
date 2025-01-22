@@ -1,5 +1,6 @@
 package com.backendContextAssignment1.plantSwap_postgres.Services;
 
+import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
 import com.backendContextAssignment1.plantSwap_postgres.models.User;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
@@ -34,12 +35,11 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    /*
-        public List<Plant> getUserPlantsByUserId(Long id) {
-            validateUserId(id);
-            plantRepository.findAll()
-        }
-    */
+    public List<Plant> getPlantsByUserId(Long id) {
+        validateUserId(id);
+        return plantRepository.findByUser(userRepository.findById(id));
+    }
+
     public void deleteUserById(Long id) {
         validateUserId(id);
         userRepository.deleteById(id);

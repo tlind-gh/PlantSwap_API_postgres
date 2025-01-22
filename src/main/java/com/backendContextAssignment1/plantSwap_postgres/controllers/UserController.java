@@ -1,6 +1,7 @@
 package com.backendContextAssignment1.plantSwap_postgres.controllers;
 
 import com.backendContextAssignment1.plantSwap_postgres.Services.UserService;
+import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
 import com.backendContextAssignment1.plantSwap_postgres.models.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,13 +35,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    /*
+    //I would have put this in plants with "/{user_id}"
     @GetMapping("/{id}/plants")
     public ResponseEntity<List<Plant>> getUserPlants(@PathVariable Long id) {
-        //return ResponseEntity.ok(userService.getUserById(id));
+        return ResponseEntity.ok(userService.getPlantsByUserId(id));
     }
-
-     */
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
