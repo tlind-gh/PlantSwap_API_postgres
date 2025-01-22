@@ -34,6 +34,11 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
 
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(transactionService.getTransactionByUserId(userId));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
             transactionService.deleteTransactionById(id);

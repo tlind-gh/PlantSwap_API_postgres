@@ -45,7 +45,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private void validateUserId(Long id) {
+    void validateUserId(Long id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("Id does not correspond to any existing user");
         }

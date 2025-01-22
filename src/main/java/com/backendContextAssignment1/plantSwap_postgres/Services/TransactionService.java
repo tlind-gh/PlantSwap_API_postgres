@@ -45,7 +45,6 @@ public class TransactionService {
             throw new IllegalArgumentException("transaction for plants with swap_conditions must have a swap offer, transaction for plants with a price must NOT have a swap offer");
         }
 
-
         if (plant.getPrice() == null) {
             transaction.setStatus(TransactionStatusEnum.SWAP_PENDING);
         } else {
@@ -60,16 +59,25 @@ public class TransactionService {
     }
 
     public Optional<Transaction> getTransactionById(Long id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Id does not correspond to any existing transaction");
-        }
+        validateTransactionId(id);
         return transactionRepository.findById(id);
     }
 
+    public List<Transaction> getTransactionByUserId(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalArgumentException("Id does not correspond to any existing user");
+        }
+        return transactionRepository.findByBuyer(userRepository.findById(id));
+    }
+
     public void deleteTransactionById(Long id) {
+        validateTransactionId(id);
+        transactionRepository.deleteById(id);
+    }
+
+    private void validateTransactionId(Long id) {
         if (!transactionRepository.existsById(id)) {
             throw new IllegalArgumentException("Id does not correspond to any existing transaction");
         }
-        transactionRepository.deleteById(id);
     }
 }
