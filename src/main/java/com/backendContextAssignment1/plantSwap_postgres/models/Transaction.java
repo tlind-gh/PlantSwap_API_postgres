@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity @Table(name = "transactions")
 public class Transaction {
@@ -35,13 +35,13 @@ public class Transaction {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @NotNull(message = "created_at cannot be null")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     public Transaction() {
-        createdAt = LocalDate.now();
+        createdAt = LocalDateTime.now();
     }
 
     public long getId() {
@@ -80,15 +80,15 @@ public class Transaction {
         this.swapOffer = swapOffer;
     }
 
-    public @NotNull(message = "created_at cannot be null") LocalDate getCreatedAt() {
+    public @NotNull(message = "created_at cannot be null") LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
