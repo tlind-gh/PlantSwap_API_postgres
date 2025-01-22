@@ -27,7 +27,6 @@ public class Transaction {
     private User buyer;
 
     @Column(name = "status", nullable = false)
-    @NotNull(message = "status cannot be null")
     private TransactionStatusEnum status;
 
     @Column(name = "swap_offer", length = 1000)
@@ -65,11 +64,11 @@ public class Transaction {
         this.buyer = buyer;
     }
 
-    public @NotNull(message = "status cannot be null") TransactionStatusEnum getStatus() {
+    public TransactionStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(@NotNull(message = "status cannot be null") TransactionStatusEnum status) {
+    public void setStatus(TransactionStatusEnum status) {
         this.status = status;
     }
 

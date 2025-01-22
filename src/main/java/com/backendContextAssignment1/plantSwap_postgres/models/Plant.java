@@ -70,7 +70,7 @@ public class Plant {
 
     @Column(name = "price")
     @Min(value = 50, message = "price must be between 50 and 1000")
-    @Max(value = 50, message = "price must be between 50 and 1000")
+    @Max(value = 1000, message = "price must be between 50 and 1000")
     private BigDecimal price;
 
     @Column(name = "swap_condition", length = 1000)
@@ -203,11 +203,11 @@ public class Plant {
         this.description = description;
     }
 
-    public @Min(value = 50, message = "price must be between 50 and 1000") @Max(value = 50, message = "price must be between 50 and 1000") BigDecimal getPrice() {
+    public @Min(value = 50, message = "price must be between 50 and 1000") @Max(value = 1000, message = "price must be between 50 and 1000") BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(@Min(value = 50, message = "price must be between 50 and 1000") @Max(value = 50, message = "price must be between 50 and 1000") BigDecimal price) {
+    public void setPrice(@Min(value = 50, message = "price must be between 50 and 1000") @Max(value = 1000, message = "price must be between 50 and 1000") BigDecimal price) {
         this.price = price;
     }
 
