@@ -20,8 +20,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        validateUserRequestBody(user);
-        user.setCreatedAt(LocalDateTime.now());
+        if (user.getUpdatedAt() != null) {
+            throw new IllegalArgumentException("updated_at must be null for new user");
+        }
         return userRepository.save(user);
     }
 
@@ -42,13 +43,14 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUser(Long id, User user) {
+    public User updateUser(Long id, User newUser) {
         User existingUser = validateUserIdAndReturnUser(id);
-        validateUserRequestBody(user);
-        existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
-        existingUser.setEmail(user.getEmail());
+        //does not update created at
+        existingUser.setUsername(newUser.getUsername());
+        existingUser.setPassword(newUser.getPassword());
+        existingUser.setEmail(newUser.getEmail());
         existingUser.setUpdatedAt(LocalDateTime.now());
+
         return userRepository.save(existingUser);
     }
 
@@ -57,9 +59,4 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing user"));
     }
 
-    private void validateUserRequestBody(User user) {
-        if (user.getUpdatedAt() != null || user.getCreatedAt() != null) {
-            throw new IllegalArgumentException("cannot input value for created_at or update_at");
-        }
-    }
 }

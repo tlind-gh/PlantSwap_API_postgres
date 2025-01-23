@@ -62,6 +62,27 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    public Transaction updateTransaction(Long id, Transaction newTransaction) {
+        Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
+        if (newTransaction.getPlant() != existingTransaction.getPlant() || newTransaction.getBuyer() != existingTransaction.getBuyer()) {
+            throw new IllegalArgumentException("plant_id and buyer_id cannot be changed");
+        }
+
+        if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
+            throw new IllegalArgumentException("status of accepted or rejected transactions cannot be changed");
+        }
+
+        if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
+            throw new IllegalArgumentException("swap_offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
+        }
+        //does not update created at
+        existingTransaction.setStatus(newTransaction.getStatus());
+        existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
+        existingTransaction.setUpdatedAt(LocalDateTime.now());
+
+        return transactionRepository.save(existingTransaction);
+    }
+
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
@@ -79,6 +100,7 @@ public class TransactionService {
         validateTransactionIdAndReturnTransaction(id);
         transactionRepository.deleteById(id);
     }
+
 
     private Transaction validateTransactionIdAndReturnTransaction(Long id) {
         return transactionRepository.findById(id)
