@@ -55,19 +55,31 @@ public class PlantService {
         plantRepository.deleteById(id);
     }
 
-    public Plant updatePlant(Long id, Plant newPlant) {
-        Plant existingPlant = validatePlantIdAndReturnPlant(id);
+    public Plant updatePlantSingleVariable(Long id, String parameter, String value) {
+        Plant plant = validatePlantIdAndReturnPlant(id);
+        validateNoAcceptedOrPendingTransactions(plant);
 
-        for (Transaction transaction : transactionRepository.findByPlant(existingPlant)) {
-            if (transaction.getStatus() != TransactionStatusEnum.SWAP_REJECTED) {
-                throw new IllegalArgumentException("plant cannot be updated due to having an accepted or pending transaction");
-            }
-
+        switch (parameter.toLowerCase().replaceAll("_", "").replaceAll(" ", "")) {
+            case "commonname" -> plant.setCommonName(value);
+            case "plantfamily" -> plant.setPlantFamily(value);
+            case "plantgenus" -> plant.setPlantGenus(value);
+            //case "plantstage" -> ???;
+            default -> throw new IllegalArgumentException("input paramaters not valid");
+            //CONTINUE HERE!!!
         }
 
-        if (newPlant.getUser() != existingPlant.getUser()) {
+        plant.setUpdatedAt(LocalDateTime.now());
+        return plantRepository.save(plant);
+    }
+
+    public Plant updatePlantFullBody(Long id, Plant newPlant) {
+        Plant existingPlant = validatePlantIdAndReturnPlant(id);
+        validateNoAcceptedOrPendingTransactions(existingPlant);
+
+        if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
             throw new IllegalArgumentException("user_id cannot be changed");
         }
+
         validateHasEitherSwapOrPriceNotBoth(newPlant);
 
         existingPlant.setCommonName(newPlant.getCommonName());
@@ -90,12 +102,19 @@ public class PlantService {
     private Plant validatePlantIdAndReturnPlant(Long id) {
         return plantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing plant"));
-
     }
 
     private void validateHasEitherSwapOrPriceNotBoth(Plant plant) {
         if ((plant.getPrice() == null && plant.getSwapConditions() == null) || (plant.getPrice() != null && plant.getSwapConditions() != null)) {
             throw new IllegalArgumentException("plant must either have price or swap_offer but not both");
+        }
+    }
+
+    private void validateNoAcceptedOrPendingTransactions(Plant plant) {
+        for (Transaction transaction : transactionRepository.findByPlant(plant)) {
+            if (transaction.getStatus() != TransactionStatusEnum.SWAP_REJECTED) {
+                throw new IllegalArgumentException("plant cannot be updated due to having an accepted or pending transaction");
+            }
         }
     }
 }

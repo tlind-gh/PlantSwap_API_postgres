@@ -34,8 +34,8 @@ public class TransactionController {
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long id) {
-        return ResponseEntity.ok(transactionService.getTransactionsByUserId(id));
+    public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
     }
 
     @DeleteMapping("/{id}")
@@ -48,4 +48,21 @@ public class TransactionController {
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
         return ResponseEntity.ok(transactionService.updateTransaction(id, transaction));
     }
+
+    @PatchMapping("/{id}/accept")
+    public ResponseEntity<Transaction> acceptTransaction(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.acceptTransaction(id));
+    }
+
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<Transaction> rejectTransaction(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.rejectTransaction(id));
+    }
+
+    @PatchMapping("/{id}/swapoffer")
+    public ResponseEntity<Transaction> updateSwapOffer(@PathVariable Long id, @RequestParam String swapOffer) {
+        return ResponseEntity.ok(transactionService.updateSwapOffer(id, swapOffer));
+    }
+
+
 }

@@ -62,9 +62,35 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    public Transaction acceptTransaction(Long id) {
+        Transaction transaction = validateTransactionIdAndReturnTransaction(id);
+        validateSwapPendingStatus(transaction);
+        transaction.setStatus(TransactionStatusEnum.ACCEPTED);
+        plantRepository.getReferenceById(transaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
+        transaction.setUpdatedAt(LocalDateTime.now());
+        return transactionRepository.save(transaction);
+    }
+
+    public Transaction rejectTransaction(Long id) {
+        Transaction transaction = validateTransactionIdAndReturnTransaction(id);
+        validateSwapPendingStatus(transaction);
+        transaction.setStatus(TransactionStatusEnum.SWAP_REJECTED);
+        plantRepository.getReferenceById(transaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
+        transaction.setUpdatedAt(LocalDateTime.now());
+        return transactionRepository.save(transaction);
+    }
+
+    public Transaction updateSwapOffer(Long id, String newSwapOffer) {
+        Transaction transaction = validateTransactionIdAndReturnTransaction(id);
+        validateSwapPendingStatus(transaction);
+        transaction.setSwapOffer(newSwapOffer);
+        transaction.setUpdatedAt(LocalDateTime.now());
+        return transactionRepository.save(transaction);
+    }
+
     public Transaction updateTransaction(Long id, Transaction newTransaction) {
         Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
-        if (newTransaction.getPlant() != existingTransaction.getPlant() || newTransaction.getBuyer() != existingTransaction.getBuyer()) {
+        if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
             throw new IllegalArgumentException("plant_id and buyer_id cannot be changed");
         }
 
@@ -75,6 +101,11 @@ public class TransactionService {
         if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
             throw new IllegalArgumentException("swap_offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
         }
+
+        if (existingTransaction.getStatus() != TransactionStatusEnum.ACCEPTED && newTransaction.getStatus() == TransactionStatusEnum.ACCEPTED) {
+            plantRepository.getReferenceById(existingTransaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
+        }
+
         //does not update created at
         existingTransaction.setStatus(newTransaction.getStatus());
         existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
@@ -101,9 +132,15 @@ public class TransactionService {
         transactionRepository.deleteById(id);
     }
 
-
     private Transaction validateTransactionIdAndReturnTransaction(Long id) {
         return transactionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing transaction"));
     }
+
+    private void validateSwapPendingStatus(Transaction transaction) {
+        if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
+            throw new IllegalArgumentException("can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
+        }
+    }
+
 }

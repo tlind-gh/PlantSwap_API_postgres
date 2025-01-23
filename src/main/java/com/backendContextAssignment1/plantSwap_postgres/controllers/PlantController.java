@@ -2,7 +2,6 @@ package com.backendContextAssignment1.plantSwap_postgres.controllers;
 
 import com.backendContextAssignment1.plantSwap_postgres.Services.PlantService;
 import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
-import com.backendContextAssignment1.plantSwap_postgres.models.Transaction;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +46,6 @@ public class PlantController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Plant> updatePlant(@PathVariable Long id, @Valid @RequestBody Plant plant) {
-        return ResponseEntity.ok(plantService.updatePlant(id, plant));
+        return ResponseEntity.ok(plantService.updatePlantFullBody(id, plant));
     }
 }
