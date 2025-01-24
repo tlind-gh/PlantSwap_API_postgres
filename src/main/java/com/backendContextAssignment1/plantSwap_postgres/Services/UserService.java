@@ -22,7 +22,7 @@ public class UserService {
 
     public User createUser(User user) {
         if (user.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("updated_at must be null for new user");
+            throw new IllegalArgumentException("updatedAt must be null for new user");
         }
         return userRepository.save(user);
     }
@@ -46,7 +46,7 @@ public class UserService {
 
     public User updateUser(Long id, User newUser) {
         User existingUser = validateUserIdAndReturnUser(id);
-        //does not update created at
+
         existingUser.setUsername(newUser.getUsername());
         existingUser.setPassword(newUser.getPassword());
         existingUser.setEmail(newUser.getEmail());

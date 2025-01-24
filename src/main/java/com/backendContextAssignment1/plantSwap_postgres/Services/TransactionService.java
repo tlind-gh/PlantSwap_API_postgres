@@ -27,60 +27,52 @@ public class TransactionService {
 
     public Transaction createTransaction(Transaction transaction) {
         if (transaction.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("cannot input value for update_at for a new transaction");
+            throw new IllegalArgumentException("updateAt must be null for new transaction");
         }
-
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
-            throw new IllegalArgumentException("buyer_id does not correspond to any existing user");
+            throw new NoSuchElementException("buyer id does not correspond to any existing user");
         }
         if (!plantRepository.existsById(transaction.getPlant().getId())) {
-            throw new IllegalArgumentException("plant_id does not correspond to any existing user");
+            throw new NoSuchElementException("plant id does not correspond to any existing user");
         }
 
-        //had to make a plant to not get a null value for the "getUser()" from the plant. Some issue with it being 2 references away.
+        //get plant for the transaction to check that the new transaction corresponds to data in plant
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
         if (plant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
             throw new IllegalArgumentException("plant is reserved or not available");
         }
-
         if (transaction.getBuyer().getId() == plant.getUser().getId()) {
-           throw new IllegalArgumentException("buyer_id cannot be the same as user_id for the owner of the plant for the transaction");
+           throw new IllegalArgumentException("buyer id cannot be the same as user id for the owner of the plant for the transaction");
         }
         if (plant.getPrice() == null && transaction.getSwapOffer() == null || plant.getPrice() != null && transaction.getSwapOffer() != null) {
-            throw new IllegalArgumentException("transaction for plants with swap_conditions must have a swap offer, transaction for plants with a price must NOT have a swap offer");
+            throw new IllegalArgumentException("transaction for plants with swap conditions must have a swap offer, transaction for plants with a price must NOT have a swap offer");
         }
 
+        //update status for transaction and plant depending on if it is for swap or for sale
         if (plant.getPrice() == null) {
             transaction.setStatus(TransactionStatusEnum.SWAP_PENDING);
-            plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.RESERVED);
         } else {
             transaction.setStatus(TransactionStatusEnum.ACCEPTED);
-            plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
         }
-        plant.setUpdatedAt(LocalDateTime.now());
-        plantRepository.save(plant);
-
+        updatePlantStatus(transaction);
         return transactionRepository.save(transaction);
     }
 
-    public Transaction acceptTransaction(Long id) {
+    //method for both rejecting and accepting pending transactions
+    public Transaction updateTransactionStatus(Long id, boolean isAccepted) {
         Transaction transaction = validateTransactionIdAndReturnTransaction(id);
         validateSwapPendingStatus(transaction);
-        transaction.setStatus(TransactionStatusEnum.ACCEPTED);
-        plantRepository.getReferenceById(transaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
-        transaction.setUpdatedAt(LocalDateTime.now());
+
+        //set statusEnum according to boolean input
+        TransactionStatusEnum status = isAccepted ? TransactionStatusEnum.ACCEPTED : TransactionStatusEnum.SWAP_REJECTED;
+        transaction.setStatus(status);
+
+        //update plant status accordingly
+        updatePlantStatus(transaction);
         return transactionRepository.save(transaction);
     }
 
-    public Transaction rejectTransaction(Long id) {
-        Transaction transaction = validateTransactionIdAndReturnTransaction(id);
-        validateSwapPendingStatus(transaction);
-        transaction.setStatus(TransactionStatusEnum.SWAP_REJECTED);
-        plantRepository.getReferenceById(transaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
-        transaction.setUpdatedAt(LocalDateTime.now());
-        return transactionRepository.save(transaction);
-    }
-
+    //method for updating a swap offer, can only be done on pending transactions
     public Transaction updateSwapOffer(Long id, String newSwapOffer) {
         Transaction transaction = validateTransactionIdAndReturnTransaction(id);
         validateSwapPendingStatus(transaction);
@@ -92,7 +84,7 @@ public class TransactionService {
     public Transaction updateTransaction(Long id, Transaction newTransaction) {
         Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
         if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
-            throw new IllegalArgumentException("plant_id and buyer_id cannot be changed");
+            throw new IllegalArgumentException("plant id and buyer id cannot be changed");
         }
 
         if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
@@ -100,11 +92,12 @@ public class TransactionService {
         }
 
         if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
-            throw new IllegalArgumentException("swap_offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
+            throw new IllegalArgumentException("swap offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
         }
 
-        if (existingTransaction.getStatus() != TransactionStatusEnum.ACCEPTED && newTransaction.getStatus() == TransactionStatusEnum.ACCEPTED) {
-            plantRepository.getReferenceById(existingTransaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
+        //if status is updated from pending to accepted or rejected, then update the plant status
+        if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
+            updatePlantStatus(newTransaction);
         }
 
         existingTransaction.setStatus(newTransaction.getStatus());
@@ -141,6 +134,17 @@ public class TransactionService {
         if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
             throw new IllegalArgumentException("Can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
         }
+    }
+
+    private void updatePlantStatus(Transaction transaction) {
+        Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
+        switch (transaction.getStatus()) {
+            case ACCEPTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
+            case SWAP_PENDING -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.RESERVED);
+            case SWAP_REJECTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
+        }
+        plant.setUpdatedAt(LocalDateTime.now());
+        plantRepository.save(plant);
     }
 
 }

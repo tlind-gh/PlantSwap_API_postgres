@@ -39,9 +39,9 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTransactionById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
             transactionService.deleteTransactionById(id);
-        return new ResponseEntity<>("Transaction deleted", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -51,18 +51,17 @@ public class TransactionController {
 
     @PatchMapping("/{id}/accept")
     public ResponseEntity<Transaction> acceptTransaction(@PathVariable Long id) {
-        return new ResponseEntity<>(transactionService.acceptTransaction(id), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.updateTransactionStatus(id, true), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/reject")
     public ResponseEntity<Transaction> rejectTransaction(@PathVariable Long id) {
-        return new ResponseEntity<>(transactionService.rejectTransaction(id), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.updateTransactionStatus(id, false), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/swapoffer")
     public ResponseEntity<Transaction> updateSwapOffer(@PathVariable Long id, @RequestParam String swapOffer) {
         return new ResponseEntity<>(transactionService.updateSwapOffer(id, swapOffer), HttpStatus.OK);
     }
-
 
 }
