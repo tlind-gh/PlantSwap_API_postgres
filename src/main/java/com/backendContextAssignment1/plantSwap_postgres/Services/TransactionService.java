@@ -136,6 +136,7 @@ public class TransactionService {
         }
     }
 
+    //method for updating plant status in accordance with the status for the transaction for the plant.
     private void updatePlantStatus(Transaction transaction) {
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
         switch (transaction.getStatus()) {

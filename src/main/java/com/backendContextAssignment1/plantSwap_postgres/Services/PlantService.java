@@ -1,11 +1,8 @@
 package com.backendContextAssignment1.plantSwap_postgres.Services;
 
 import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
-import com.backendContextAssignment1.plantSwap_postgres.models.Transaction;
 import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatusEnum;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
-import com.backendContextAssignment1.plantSwap_postgres.repositories.TransactionRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +14,10 @@ import java.util.NoSuchElementException;
 public class PlantService {
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
-    private final TransactionRepository transactionRepository;
 
-    public PlantService(PlantRepository plantRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
+    public PlantService(PlantRepository plantRepository, UserRepository userRepository) {
         this.plantRepository = plantRepository;
         this.userRepository = userRepository;
-        this.transactionRepository = transactionRepository;
     }
 
     public Plant createPlant(Plant plant) {
@@ -58,10 +53,12 @@ public class PlantService {
 
     public Plant updatePlant(Long id, Plant newPlant) {
         Plant existingPlant = validatePlantIdAndReturnPlant(id);
-        validateNoAcceptedOrPendingTransactions(existingPlant);
+        if (existingPlant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
+            throw new IllegalArgumentException("plants with accepted or pending transactions cannot be updated");
+        }
 
         if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
-            throw new IllegalArgumentException("userId cannot be updated changed");
+            throw new IllegalArgumentException("user id cannot be updated changed");
         }
 
         validateHasEitherSwapOrPriceNotBoth(newPlant);
@@ -91,14 +88,6 @@ public class PlantService {
     private void validateHasEitherSwapOrPriceNotBoth(Plant plant) {
         if ((plant.getPrice() == null && plant.getSwapConditions() == null) || (plant.getPrice() != null && plant.getSwapConditions() != null)) {
             throw new IllegalArgumentException("plant must either have price or swap_offer but not both");
-        }
-    }
-
-    private void validateNoAcceptedOrPendingTransactions(Plant plant) {
-        for (Transaction transaction : transactionRepository.findByPlant(plant)) {
-            if (transaction.getStatus() != TransactionStatusEnum.SWAP_REJECTED) {
-                throw new IllegalArgumentException("plant cannot be updated due to having an accepted or pending transaction");
-            }
         }
     }
 }
