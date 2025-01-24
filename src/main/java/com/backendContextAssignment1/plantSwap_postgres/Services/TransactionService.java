@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TransactionService {
@@ -106,7 +107,6 @@ public class TransactionService {
             plantRepository.getReferenceById(existingTransaction.getPlant().getId()).setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
         }
 
-        //does not update created at
         existingTransaction.setStatus(newTransaction.getStatus());
         existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
         existingTransaction.setUpdatedAt(LocalDateTime.now());
@@ -124,7 +124,7 @@ public class TransactionService {
 
     public List<Transaction> getTransactionsByUserId(Long userId) {
         return transactionRepository.findByBuyer(userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing user")));
+                .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));
     }
 
     public void deleteTransactionById(Long id) {
@@ -134,12 +134,12 @@ public class TransactionService {
 
     private Transaction validateTransactionIdAndReturnTransaction(Long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing transaction"));
+                .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing transaction"));
     }
 
     private void validateSwapPendingStatus(Transaction transaction) {
         if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
-            throw new IllegalArgumentException("can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
+            throw new IllegalArgumentException("Can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
         }
     }
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PlantService {
@@ -26,13 +27,13 @@ public class PlantService {
 
     public Plant createPlant(Plant plant) {
         if (plant.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("cannot input value for update_at for a new plant");
+            throw new IllegalArgumentException("UpdateAt must NOT be included in body variables");
         }
         if (!userRepository.existsById(plant.getUser().getId())) {
-            throw new IllegalArgumentException("user_id does not correspond to any existing user");
+            throw new NoSuchElementException("UserId does not correspond to any existing user");
         }
         if (plantRepository.findByUserAndAvailabilityStatus(plant.getUser(), PlantAvailabilityStatusEnum.AVAILABLE).size() >= 10) {
-            throw new IllegalArgumentException("user already has 10 available plants in database no new plants can be added for this user");
+            throw new IllegalArgumentException("User already has 10 available plants in database, no new plants can be added for this user");
         }
         validateHasEitherSwapOrPriceNotBoth(plant);
         return plantRepository.save(plant);
@@ -55,29 +56,12 @@ public class PlantService {
         plantRepository.deleteById(id);
     }
 
-    public Plant updatePlantSingleVariable(Long id, String parameter, String value) {
-        Plant plant = validatePlantIdAndReturnPlant(id);
-        validateNoAcceptedOrPendingTransactions(plant);
-
-        switch (parameter.toLowerCase().replaceAll("_", "").replaceAll(" ", "")) {
-            case "commonname" -> plant.setCommonName(value);
-            case "plantfamily" -> plant.setPlantFamily(value);
-            case "plantgenus" -> plant.setPlantGenus(value);
-            //case "plantstage" -> ???;
-            default -> throw new IllegalArgumentException("input paramaters not valid");
-            //CONTINUE HERE!!!
-        }
-
-        plant.setUpdatedAt(LocalDateTime.now());
-        return plantRepository.save(plant);
-    }
-
-    public Plant updatePlantFullBody(Long id, Plant newPlant) {
+    public Plant updatePlant(Long id, Plant newPlant) {
         Plant existingPlant = validatePlantIdAndReturnPlant(id);
         validateNoAcceptedOrPendingTransactions(existingPlant);
 
         if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
-            throw new IllegalArgumentException("user_id cannot be changed");
+            throw new IllegalArgumentException("userId cannot be updated changed");
         }
 
         validateHasEitherSwapOrPriceNotBoth(newPlant);
@@ -101,7 +85,7 @@ public class PlantService {
 
     private Plant validatePlantIdAndReturnPlant(Long id) {
         return plantRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing plant"));
+                .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing plant"));
     }
 
     private void validateHasEitherSwapOrPriceNotBoth(Plant plant) {

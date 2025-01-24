@@ -21,33 +21,33 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
+        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     //I would have put this in plants with "/{user_id}"
     @GetMapping("/{id}/plants")
     public ResponseEntity<List<Plant>> getUserPlants(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getPlantsByUserId(id));
+        return new ResponseEntity<>(userService.getPlantsByUserId(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>("User deleted", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
+        return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
     }
 }

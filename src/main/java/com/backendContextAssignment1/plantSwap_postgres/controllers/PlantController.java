@@ -20,32 +20,32 @@ public class PlantController {
 
     @PostMapping
     public ResponseEntity<Plant> addPlant(@Valid @RequestBody Plant plant) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(plantService.createPlant(plant));
+        return new ResponseEntity<>(plantService.createPlant(plant), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<Plant>> getAllPlants() {
-        return ResponseEntity.ok(plantService.getAllPlants());
+        return new ResponseEntity<>(plantService.getAllPlants(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Plant> getPlantById(@PathVariable Long id) {
-        return ResponseEntity.ok(plantService.getPlantById(id));
+        return new ResponseEntity<>(plantService.getPlantById(id), HttpStatus.OK);
     }
 
     @GetMapping("/available")
     public ResponseEntity<List<Plant>> getAvailablePlants() {
-        return ResponseEntity.ok(plantService.getAvailablePlants());
+        return new ResponseEntity<>(plantService.getAvailablePlants(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlantById(@PathVariable Long id) {
+    public ResponseEntity<String> deletePlantById(@PathVariable Long id) {
         plantService.deletePlantById(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>("Plant deleted", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Plant> updatePlant(@PathVariable Long id, @Valid @RequestBody Plant plant) {
-        return ResponseEntity.ok(plantService.updatePlantFullBody(id, plant));
+        return new ResponseEntity<>(plantService.updatePlant(id, plant), HttpStatus.OK);
     }
 }

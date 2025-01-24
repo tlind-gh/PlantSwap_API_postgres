@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserService {
@@ -56,7 +57,7 @@ public class UserService {
 
     private User validateUserIdAndReturnUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Id does not correspond to any existing user"));
+                .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user"));
     }
 
 }

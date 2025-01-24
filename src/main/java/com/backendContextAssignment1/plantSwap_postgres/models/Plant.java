@@ -19,49 +19,47 @@ public class Plant {
     //BUT NOT MORE THAN 10 ACTIVE PLANTS - make this constraint somewhere
     @ManyToOne(fetch = FetchType.EAGER)
     //not nullable
-    @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "user_id cannot be null")
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @NotNull(message = "user id cannot be null")
     private User user;
 
     @Column(name = "common_name", nullable = false, length = 50)
-    @NotNull(message = "common_name cannot be null")
-    @Size(min = 1, max = 50, message = "common_name must between 8 and 50 characters long")
+    @NotNull(message = "commonName cannot be null")
+    @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long")
     private String commonName;
 
     @Column(name = "plant_family", nullable = false, length = 50)
     @NotNull(message = "plant_family cannot be null")
-    @Size(min = 1, max = 50, message = "plant_family must between 8 and 50 characters long")
+    @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long")
     private String plantFamily;
 
     @Column(name = "plant_genus", nullable = false, length = 50)
     @NotNull(message = "plant_genus cannot be null")
-    @Size(min = 1, max = 50, message = "plant_genus must between 8 and 50 characters long")
+    @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long")
     private String plantGenus;
 
     @Column(name = "plant_size", nullable = false)
-    @NotNull(message = "plant_size cannot be null")
+    @NotNull(message = "plantSize cannot be null")
     private PlantSizeEnum plantSize;
 
     @Column(name = "plant_stage", nullable = false)
-    @NotNull(message = "plant_stage cannot be null")
+    @NotNull(message = "plantStage cannot be null")
     private PlantStageEnum plantStage;
 
     @Column(name = "care_difficulty", nullable = false)
-    @NotNull(message = "care_difficulty cannot be null")
-    @Min(value = 1, message = "care_difficulty must be a value between 1 and 5")
-    @Max(value = 5, message = "care_difficulty must be a value between 1 and 5")
+    @NotNull(message = "careDifficulty cannot be null")
+    @Min(value = 1, message = "careDifficulty must be an integer between 1 and 5")
+    @Max(value = 5, message = "careDifficulty must be an integer between 1 and 5")
     private int careDifficulty;
 
     @Column(name = "light_requirements", nullable = false)
-    @NotNull(message = "light_requirements cannot be null")
     private PlantLightRequirementEnum lightRequirement;
 
     @Column(name = "water_requirements", nullable = false)
-    @NotNull(message = "water_requirements cannot be null")
     private PlantWaterRequirementEnum waterRequirement;
 
     @Column(name = "image_url", length = 500)
-    @Size(max = 500, message = "image_url cannot be longer than 500 characters")
+    @Size(max = 500, message = "imageURL cannot be longer than 500 characters")
     private String imageURL;
 
     @Column(name = "description", length = 1000)
@@ -74,7 +72,7 @@ public class Plant {
     private BigDecimal price;
 
     @Column(name = "swap_condition", length = 1000)
-    @Size(max = 1000, message = "swap_condition cannot be longer than 1000 characters")
+    @Size(max = 1000, message = "swapCondition cannot be longer than 1000 characters")
     private String swapConditions;
 
     @Column(name = "availability", nullable = false)
@@ -82,7 +80,6 @@ public class Plant {
     private PlantAvailabilityStatusEnum availabilityStatus;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @NotNull(message = "created_at cannot be null")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
@@ -110,86 +107,86 @@ public class Plant {
         return id;
     }
 
-    public @NotNull(message = "user_id cannot be null") User getUser() {
+    public @NotNull(message = "user id cannot be null") User getUser() {
         return user;
     }
 
-    public void setUser(@NotNull(message = "user_id cannot be null") User user) {
+    public void setUser(@NotNull(message = "user id cannot be null") User user) {
         this.user = user;
     }
 
-    public @NotNull(message = "common_name cannot be null") @Size(min = 1, max = 50, message = "common_name must between 8 and 50 characters long") String getCommonName() {
+    public @NotNull(message = "commonName cannot be null") @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long") String getCommonName() {
         return commonName;
     }
 
-    public void setCommonName(@NotNull(message = "common_name cannot be null") @Size(min = 1, max = 50, message = "common_name must between 8 and 50 characters long") String commonName) {
+    public void setCommonName(@NotNull(message = "commonName cannot be null") @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long") String commonName) {
         this.commonName = commonName;
     }
 
-    public @NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plant_family must between 8 and 50 characters long") String getPlantFamily() {
+    public @NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long") String getPlantFamily() {
         return plantFamily;
     }
 
-    public void setPlantFamily(@NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plant_family must between 8 and 50 characters long") String plantFamily) {
+    public void setPlantFamily(@NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long") String plantFamily) {
         this.plantFamily = plantFamily;
     }
 
-    public @NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plant_genus must between 8 and 50 characters long") String getPlantGenus() {
+    public @NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long") String getPlantGenus() {
         return plantGenus;
     }
 
-    public void setPlantGenus(@NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plant_genus must between 8 and 50 characters long") String plantGenus) {
+    public void setPlantGenus(@NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long") String plantGenus) {
         this.plantGenus = plantGenus;
     }
 
-    public @NotNull(message = "plant_size cannot be null") PlantSizeEnum getPlantSize() {
+    public @NotNull(message = "plantSize cannot be null") PlantSizeEnum getPlantSize() {
         return plantSize;
     }
 
-    public void setPlantSize(@NotNull(message = "plant_size cannot be null") PlantSizeEnum plantSize) {
+    public void setPlantSize(@NotNull(message = "plantSize cannot be null") PlantSizeEnum plantSize) {
         this.plantSize = plantSize;
     }
 
-    public @NotNull(message = "plant_stage cannot be null") PlantStageEnum getPlantStage() {
+    public @NotNull(message = "plantStage cannot be null") PlantStageEnum getPlantStage() {
         return plantStage;
     }
 
-    public void setPlantStage(@NotNull(message = "plant_stage cannot be null") PlantStageEnum plantStage) {
+    public void setPlantStage(@NotNull(message = "plantStage cannot be null") PlantStageEnum plantStage) {
         this.plantStage = plantStage;
     }
 
-    @NotNull(message = "care_difficulty cannot be null")
-    @Min(value = 1, message = "care_difficulty must be a value between 1 and 5")
-    @Max(value = 5, message = "care_difficulty must be a value between 1 and 5")
+    @NotNull(message = "careDifficulty cannot be null")
+    @Min(value = 1, message = "careDifficulty must be an integer between 1 and 5")
+    @Max(value = 5, message = "careDifficulty must be an integer between 1 and 5")
     public int getCareDifficulty() {
         return careDifficulty;
     }
 
-    public void setCareDifficulty(@NotNull(message = "care_difficulty cannot be null") @Min(value = 1, message = "care_difficulty must be a value between 1 and 5") @Max(value = 5, message = "care_difficulty must be a value between 1 and 5") int careDifficulty) {
+    public void setCareDifficulty(@NotNull(message = "careDifficulty cannot be null") @Min(value = 1, message = "careDifficulty must be an integer between 1 and 5") @Max(value = 5, message = "careDifficulty must be an integer between 1 and 5") int careDifficulty) {
         this.careDifficulty = careDifficulty;
     }
 
-    public @NotNull(message = "light_requirements cannot be null") PlantLightRequirementEnum getLightRequirement() {
+    public PlantLightRequirementEnum getLightRequirement() {
         return lightRequirement;
     }
 
-    public void setLightRequirement(@NotNull(message = "light_requirements cannot be null") PlantLightRequirementEnum lightRequirement) {
+    public void setLightRequirement(PlantLightRequirementEnum lightRequirement) {
         this.lightRequirement = lightRequirement;
     }
 
-    public @NotNull(message = "water_requirements cannot be null") PlantWaterRequirementEnum getWaterRequirement() {
+    public PlantWaterRequirementEnum getWaterRequirement() {
         return waterRequirement;
     }
 
-    public void setWaterRequirement(@NotNull(message = "water_requirements cannot be null") PlantWaterRequirementEnum waterRequirement) {
+    public void setWaterRequirement(PlantWaterRequirementEnum waterRequirement) {
         this.waterRequirement = waterRequirement;
     }
 
-    public @Size(max = 500, message = "image_url cannot be longer than 500 characters") String getImageURL() {
+    public @Size(max = 500, message = "imageURL cannot be longer than 500 characters") String getImageURL() {
         return imageURL;
     }
 
-    public void setImageURL(@Size(max = 500, message = "image_url cannot be longer than 500 characters") String imageURL) {
+    public void setImageURL(@Size(max = 500, message = "imageURL cannot be longer than 500 characters") String imageURL) {
         this.imageURL = imageURL;
     }
 
@@ -209,11 +206,11 @@ public class Plant {
         this.price = price;
     }
 
-    public @Size(max = 1000, message = "swap_condition cannot be longer than 1000 characters") String getSwapConditions() {
+    public @Size(max = 1000, message = "swapCondition cannot be longer than 1000 characters") String getSwapConditions() {
         return swapConditions;
     }
 
-    public void setSwapConditions(@Size(max = 1000, message = "swap_condition cannot be longer than 1000 characters") String swapConditions) {
+    public void setSwapConditions(@Size(max = 1000, message = "swapCondition cannot be longer than 1000 characters") String swapConditions) {
         this.swapConditions = swapConditions;
     }
 
@@ -225,9 +222,10 @@ public class Plant {
         this.availabilityStatus = availabilityStatus;
     }
 
-    public @NotNull(message = "created_at cannot be null") LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

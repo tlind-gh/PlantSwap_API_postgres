@@ -20,48 +20,48 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Transaction> addTransaction(@Valid @RequestBody Transaction transaction) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.createTransaction(transaction));
+        return new ResponseEntity<>(transactionService.createTransaction(transaction), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {
-        return ResponseEntity.ok(transactionService.getAllTransactions());
+        return new ResponseEntity<>(transactionService.getAllTransactions(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
-        return ResponseEntity.ok(transactionService.getTransactionById(id));
+        return new ResponseEntity<>(transactionService.getTransactionById(id), HttpStatus.OK);
     }
 
     @GetMapping("user/{userId}")
     public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(transactionService.getTransactionsByUserId(userId));
+        return new ResponseEntity<>(transactionService.getTransactionsByUserId(userId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteTransactionById(@PathVariable Long id) {
             transactionService.deleteTransactionById(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>("Transaction deleted", HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
-        return ResponseEntity.ok(transactionService.updateTransaction(id, transaction));
+        return new ResponseEntity<>(transactionService.updateTransaction(id, transaction), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/accept")
     public ResponseEntity<Transaction> acceptTransaction(@PathVariable Long id) {
-        return ResponseEntity.ok(transactionService.acceptTransaction(id));
+        return new ResponseEntity<>(transactionService.acceptTransaction(id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/reject")
     public ResponseEntity<Transaction> rejectTransaction(@PathVariable Long id) {
-        return ResponseEntity.ok(transactionService.rejectTransaction(id));
+        return new ResponseEntity<>(transactionService.rejectTransaction(id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/swapoffer")
     public ResponseEntity<Transaction> updateSwapOffer(@PathVariable Long id, @RequestParam String swapOffer) {
-        return ResponseEntity.ok(transactionService.updateSwapOffer(id, swapOffer));
+        return new ResponseEntity<>(transactionService.updateSwapOffer(id, swapOffer), HttpStatus.OK);
     }
 
 

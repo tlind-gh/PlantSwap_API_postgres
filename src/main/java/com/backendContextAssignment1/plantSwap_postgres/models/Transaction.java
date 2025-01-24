@@ -15,26 +15,25 @@ public class Transaction {
     //one plant can have more than one transaction if prev. transaction is rejected
     @ManyToOne(fetch = FetchType.EAGER)
     //not nullable
-    @JoinColumn(name = "plant_id", nullable = false)
-    @NotNull(message = "plant_id cannot be null")
+    @JoinColumn(name = "plant_id", nullable = false, updatable = false)
+    @NotNull(message = "plant id cannot be null")
     private Plant plant;
 
     //one user can have more than one transaction
     @ManyToOne(fetch = FetchType.EAGER)
     //not nullable
-    @JoinColumn(name = "buyer_id", nullable = false)
-    @NotNull(message = "buyer_id cannot be null")
+    @JoinColumn(name = "buyer_id", nullable = false, updatable = false)
+    @NotNull(message = "buyer id cannot be null")
     private User buyer;
 
     @Column(name = "status", nullable = false)
     private TransactionStatusEnum status;
 
     @Column(name = "swap_offer", length = 1000)
-    @Size(max = 1000, message = "swap_offer cannot be longer than 1000 characters")
+    @Size(max = 1000, message = "swapOffer cannot be longer than 1000 characters")
     private String swapOffer;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @NotNull(message = "created_at cannot be null")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
@@ -48,19 +47,19 @@ public class Transaction {
         return id;
     }
 
-    public @NotNull(message = "plant_id cannot be null") Plant getPlant() {
+    public @NotNull(message = "plant id cannot be null") Plant getPlant() {
         return plant;
     }
 
-    public void setPlant(@NotNull(message = "plant_id cannot be null") Plant plant) {
+    public void setPlant(@NotNull(message = "plant id cannot be null") Plant plant) {
         this.plant = plant;
     }
 
-    public @NotNull(message = "plant_id cannot be null") User getBuyer() {
+    public @NotNull(message = "buyer id cannot be null") User getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(@NotNull(message = "plant_id cannot be null") User buyer) {
+    public void setBuyer(@NotNull(message = "buyer id cannot be null") User buyer) {
         this.buyer = buyer;
     }
 
@@ -72,15 +71,15 @@ public class Transaction {
         this.status = status;
     }
 
-    public @Size(max = 1000, message = "swap_offer cannot be longer than 1000 characters") String getSwapOffer() {
+    public @Size(max = 1000, message = "swapOffer cannot be longer than 1000 characters") String getSwapOffer() {
         return swapOffer;
     }
 
-    public void setSwapOffer(@Size(max = 1000, message = "swap_offer cannot be longer than 1000 characters") String swapOffer) {
+    public void setSwapOffer(@Size(max = 1000, message = "swapOffer cannot be longer than 1000 characters") String swapOffer) {
         this.swapOffer = swapOffer;
     }
 
-    public @NotNull(message = "created_at cannot be null") LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
