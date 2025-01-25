@@ -21,16 +21,18 @@ public class PlantService {
     }
 
     public Plant createPlant(Plant plant) {
-        if (plant.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("UpdateAt must NOT be included in body variables");
-        }
         if (!userRepository.existsById(plant.getUser().getId())) {
-            throw new NoSuchElementException("UserId does not correspond to any existing user");
+            throw new NoSuchElementException("user id does not correspond to any existing user");
         }
         if (plantRepository.findByUserAndAvailabilityStatus(plant.getUser(), PlantAvailabilityStatusEnum.AVAILABLE).size() >= 10) {
-            throw new IllegalArgumentException("User already has 10 available plants in database, no new plants can be added for this user");
+            throw new IllegalArgumentException("user already has 10 available plants in database, no new plants can be added for this user");
         }
         validateHasEitherSwapOrPriceNotBoth(plant);
+
+        //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
+        plant.setCreatedAt(LocalDateTime.now());
+        plant.setUpdatedAt(null);
+
         return plantRepository.save(plant);
     }
 
@@ -53,6 +55,7 @@ public class PlantService {
         plantRepository.deleteById(id);
     }
 
+    //will update ALL fields for a plant in accordance with a new plant (from RequestBody through PlantController)
     public Plant updatePlant(Long id, Plant newPlant) {
         Plant existingPlant = validatePlantIdAndReturnPlant(id);
         if (existingPlant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
@@ -82,14 +85,17 @@ public class PlantService {
         return plantRepository.save(existingPlant);
     }
 
+    /*validates that a user exists in database, either casts exception or returns a User
+    (findByID() returns Optional<User>, but can be saved as User if expression includes casting exceptions if no User is returned by repository*/
     private Plant validatePlantIdAndReturnPlant(Long id) {
         return plantRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing plant"));
     }
 
+    /*validates that a new plant has "null" in exactly 1 of the following two fields: "price" and "swapOffer"*/
     private void validateHasEitherSwapOrPriceNotBoth(Plant plant) {
         if ((plant.getPrice() == null && plant.getSwapConditions() == null) || (plant.getPrice() != null && plant.getSwapConditions() != null)) {
-            throw new IllegalArgumentException("plant must either have price or swap_offer but not both");
+            throw new IllegalArgumentException("plant must either have price or swapOffer but not both");
         }
     }
 }

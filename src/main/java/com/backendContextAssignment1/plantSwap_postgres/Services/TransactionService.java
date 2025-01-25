@@ -26,9 +26,6 @@ public class TransactionService {
     }
 
     public Transaction createTransaction(Transaction transaction) {
-        if (transaction.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("updateAt must be null for new transaction");
-        }
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
             throw new NoSuchElementException("buyer id does not correspond to any existing user");
         }
@@ -52,6 +49,11 @@ public class TransactionService {
         TransactionStatusEnum status = (plant.getPrice() == null) ? TransactionStatusEnum.SWAP_PENDING : TransactionStatusEnum.ACCEPTED;
 
         updateTransactionAndPlantStatus(transaction, status);
+
+        //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
+        transaction.setCreatedAt(LocalDateTime.now());
+        transaction.setUpdatedAt(null);
+
         return transactionRepository.save(transaction);
     }
 
@@ -65,6 +67,7 @@ public class TransactionService {
 
         //update transaction and plant status accordingly
         updateTransactionAndPlantStatus(transaction, status);
+        transaction.setUpdatedAt(LocalDateTime.now());
         return transactionRepository.save(transaction);
     }
 
@@ -77,6 +80,7 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    //only because it is a part of the Assignment description, is superfluous since there are patch methods covering all updatable fields
     public Transaction updateTransaction(Long id, Transaction newTransaction) {
         Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
         if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
@@ -115,8 +119,7 @@ public class TransactionService {
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));
     }
 
-    //only pending and rejected transactions can be deleted
-    //deletion of accepted transactions is made by deleting the plant
+    //only pending and rejected transactions can be deleted (deletion of accepted transactions is made by deleting the plant)
     public void deleteTransactionById(Long id) {
         Transaction transaction = validateTransactionIdAndReturnTransaction(id);
         if (transaction.getStatus() == TransactionStatusEnum.ACCEPTED) {
@@ -129,13 +132,18 @@ public class TransactionService {
         transactionRepository.deleteById(id);
     }
 
+    /*validates that transaction exists in database, either casts exception or returns a Transaction
+    (findByID() returns Optional<Transaction>, but can be saved as Transaction if expression includes casting exceptions if no Transaction is returned by repository*/
     private Transaction validateTransactionIdAndReturnTransaction(Long id) {
         return transactionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing transaction"));
     }
 
+    /*validate that a transaction is pending, checks both "status" and "swapOffer"
+    (a pending transaction should always have a swapOffer, so the dual check should be redundant if application works properly,
+    but the dual check is done for validation robustness)*/
     private void validateSwapPendingStatus(Transaction transaction) {
-        if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
+        if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING || transaction.getSwapOffer() == null) {
             throw new IllegalArgumentException("Can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
         }
     }

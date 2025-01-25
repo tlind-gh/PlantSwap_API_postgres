@@ -25,9 +25,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (user.getUpdatedAt() != null) {
-            throw new IllegalArgumentException("updatedAt must be null for new user");
-        }
+        //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(null);
         return userRepository.save(user);
     }
 
@@ -65,6 +65,8 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    /*validates that a user exists in database, either casts exception or returns a User
+    (findByID() returns Optional<User>, but can be saved as User if expression includes casting exceptions if no User is returned by repository*/
     private User validateUserIdAndReturnUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user"));
