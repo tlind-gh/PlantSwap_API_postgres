@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,10 +17,8 @@ public class Plant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //one user can have more than one plant
-    //BUT NOT MORE THAN 10 ACTIVE PLANTS - make this constraint somewhere
     @ManyToOne(fetch = FetchType.EAGER)
-    //not nullable
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     @NotNull(message = "user id cannot be null")
     private User user;

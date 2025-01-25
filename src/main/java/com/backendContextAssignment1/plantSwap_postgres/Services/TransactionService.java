@@ -49,12 +49,9 @@ public class TransactionService {
         }
 
         //update status for transaction and plant depending on if it is for swap or for sale
-        if (plant.getPrice() == null) {
-            transaction.setStatus(TransactionStatusEnum.SWAP_PENDING);
-        } else {
-            transaction.setStatus(TransactionStatusEnum.ACCEPTED);
-        }
-        updatePlantStatus(transaction);
+        TransactionStatusEnum status = (plant.getPrice() == null) ? TransactionStatusEnum.SWAP_PENDING : TransactionStatusEnum.ACCEPTED;
+
+        updateTransactionAndPlantStatus(transaction, status);
         return transactionRepository.save(transaction);
     }
 
@@ -65,10 +62,9 @@ public class TransactionService {
 
         //set statusEnum according to boolean input
         TransactionStatusEnum status = isAccepted ? TransactionStatusEnum.ACCEPTED : TransactionStatusEnum.SWAP_REJECTED;
-        transaction.setStatus(status);
 
-        //update plant status accordingly
-        updatePlantStatus(transaction);
+        //update transaction and plant status accordingly
+        updateTransactionAndPlantStatus(transaction, status);
         return transactionRepository.save(transaction);
     }
 
@@ -97,10 +93,9 @@ public class TransactionService {
 
         //if status is updated from pending to accepted or rejected, then update the plant status
         if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
-            updatePlantStatus(newTransaction);
+            updateTransactionAndPlantStatus(existingTransaction, newTransaction.getStatus());
         }
 
-        existingTransaction.setStatus(newTransaction.getStatus());
         existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
         existingTransaction.setUpdatedAt(LocalDateTime.now());
 
@@ -120,8 +115,17 @@ public class TransactionService {
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));
     }
 
+    //only pending and rejected transactions can be deleted
+    //deletion of accepted transactions is made by deleting the plant
     public void deleteTransactionById(Long id) {
-        validateTransactionIdAndReturnTransaction(id);
+        Transaction transaction = validateTransactionIdAndReturnTransaction(id);
+        if (transaction.getStatus() == TransactionStatusEnum.ACCEPTED) {
+            throw new UnsupportedOperationException("accepted transaction cannot be deleted directly (delete the relevant plant to remove both plant and transaction)");
+        }
+        //when deleting a pending transaction, the status of the plant is updated to available (same as if the swap is rejected)
+        if (transaction.getStatus() == TransactionStatusEnum.SWAP_PENDING) {
+            updateTransactionAndPlantStatus(transaction, TransactionStatusEnum.SWAP_REJECTED);
+        }
         transactionRepository.deleteById(id);
     }
 
@@ -136,10 +140,11 @@ public class TransactionService {
         }
     }
 
-    //method for updating plant status in accordance with the status for the transaction for the plant.
-    private void updatePlantStatus(Transaction transaction) {
+    //method for updating transaction and plant status.
+    private void updateTransactionAndPlantStatus(Transaction transaction, TransactionStatusEnum transactionStatus) {
+        transaction.setStatus(transactionStatus);
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
-        switch (transaction.getStatus()) {
+        switch (transactionStatus) {
             case ACCEPTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
             case SWAP_PENDING -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.RESERVED);
             case SWAP_REJECTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);

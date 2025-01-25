@@ -4,6 +4,8 @@ import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.Tr
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -12,16 +14,14 @@ public class Transaction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //one plant can have more than one transaction if prev. transaction is rejected
     @ManyToOne(fetch = FetchType.EAGER)
-    //not nullable
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "plant_id", nullable = false, updatable = false)
     @NotNull(message = "plant id cannot be null")
     private Plant plant;
 
-    //one user can have more than one transaction
     @ManyToOne(fetch = FetchType.EAGER)
-    //not nullable
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "buyer_id", nullable = false, updatable = false)
     @NotNull(message = "buyer id cannot be null")
     private User buyer;

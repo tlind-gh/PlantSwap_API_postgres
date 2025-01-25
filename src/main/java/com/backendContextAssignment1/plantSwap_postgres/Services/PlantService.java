@@ -47,7 +47,9 @@ public class PlantService {
     }
 
     public void deletePlantById(Long id) {
-        validatePlantIdAndReturnPlant(id);
+        if (validatePlantIdAndReturnPlant(id).getAvailabilityStatus() == PlantAvailabilityStatusEnum.RESERVED) {
+            throw new UnsupportedOperationException("plants with pending transactions cannot be deleted");
+        }
         plantRepository.deleteById(id);
     }
 

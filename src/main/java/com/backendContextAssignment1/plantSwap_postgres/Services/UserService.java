@@ -2,7 +2,9 @@ package com.backendContextAssignment1.plantSwap_postgres.Services;
 
 import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
 import com.backendContextAssignment1.plantSwap_postgres.models.User;
+import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
+import com.backendContextAssignment1.plantSwap_postgres.repositories.TransactionRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ import java.util.NoSuchElementException;
 public class UserService {
     private final UserRepository userRepository;
     private final PlantRepository plantRepository;
+    private final TransactionRepository transactionRepository;
 
-    public UserService(UserRepository userRepository, PlantRepository plantRepository) {
+    public UserService(UserRepository userRepository, PlantRepository plantRepository, TransactionRepository transactionRepository) {
         this.userRepository = userRepository;
         this.plantRepository = plantRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public User createUser(User user) {
@@ -40,7 +44,13 @@ public class UserService {
     }
 
     public void deleteUserById(Long id) {
-        validateUserIdAndReturnUser(id);
+        User user = validateUserIdAndReturnUser(id);
+        if (!plantRepository.findByUserAndAvailabilityStatus(user, PlantAvailabilityStatusEnum.RESERVED).isEmpty()) {
+            throw new UnsupportedOperationException("users referenced by plants with pending transactions cannot be deleted");
+        }
+        if (!transactionRepository.findByBuyer(user).isEmpty()) {
+            throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
+        }
         userRepository.deleteById(id);
     }
 
