@@ -80,32 +80,6 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    //only because it is a part of the Assignment description, is superfluous since there are patch methods covering all updatable fields
-    public Transaction updateTransaction(Long id, Transaction newTransaction) {
-        Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
-        if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
-            throw new IllegalArgumentException("plant id and buyer id cannot be changed");
-        }
-
-        if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
-            throw new IllegalArgumentException("status of accepted or rejected transactions cannot be changed");
-        }
-
-        if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
-            throw new IllegalArgumentException("swap offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
-        }
-
-        //if status is updated from pending to accepted or rejected, then update the plant status
-        if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
-            updateTransactionAndPlantStatus(existingTransaction, newTransaction.getStatus());
-        }
-
-        existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
-        existingTransaction.setUpdatedAt(LocalDateTime.now());
-
-        return transactionRepository.save(existingTransaction);
-    }
-
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }

@@ -44,11 +44,6 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
-        return new ResponseEntity<>(transactionService.updateTransaction(id, transaction), HttpStatus.OK);
-    }
-
     @PatchMapping("/{id}/accept")
     public ResponseEntity<Transaction> acceptTransaction(@PathVariable Long id) {
         return new ResponseEntity<>(transactionService.updateTransactionStatus(id, true), HttpStatus.OK);
