@@ -17,10 +17,37 @@ short description
 
 ## Running the app
 add things about .env, docker etc.
+- create empty db "plantSwap" in postgres
+- go to repo directory and run "docker-compose up -d"
 
-## Transaction update method
+### src/main/resources/application.yml
+```
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/plantSwap
+    username: {your postgres username}
+    password: {your postgres password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+```
+### /.env 
+```
+POSTGRES_DB: plantSwap
+POSTGRES_USER: {your postgres username}
+POSTGRES_PASSWORD: {your postgres password}
+```
 
-### TransactionService class
+## Retired Transaction update methods
+The follow Transaction methods (in TransactionService and TransactionController) was removed after it became superfluous
+due to the addition of three patch-methods (for updating the SwapOffer, or rejecting/accepting a Transaction). These patch methods
+cover all utilities of the update put-method, since the update method did not allow for updating the plant or user id.
+
+### TransactionService class method
 ```
 public Transaction updateTransaction(Long id, Transaction newTransaction) {
 Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
@@ -48,7 +75,7 @@ throw new IllegalArgumentException("plant id and buyer id cannot be changed");
     }
 ```
 
-### TransactionController class
+### TransactionController class method 
 ```
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {

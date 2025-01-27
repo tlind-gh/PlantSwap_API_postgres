@@ -1,5 +1,6 @@
 package com.backendContextAssignment1.plantSwap_postgres.exceptions;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -33,8 +34,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input argument(s):\n -"+exception.getMessage());
     }
 
-
-
     //Not found (404)
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElement(NoSuchElementException exception) {
@@ -44,7 +43,11 @@ public class GlobalExceptionHandler {
     //Other errors (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneral(Exception exception) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred:\n"+exception.getMessage());
+        String ErrorMessage = "An unexpected error occurred (see detailed message below):\n\n";
+        if (exception.getCause() instanceof ConstraintViolationException) {
+            ErrorMessage = "Username and/or email already exists for another user (see detailed message below):\n\n";
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage+exception.getMessage());
     }
 
 }
