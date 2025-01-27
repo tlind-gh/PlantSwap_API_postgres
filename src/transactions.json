@@ -1,0 +1,16 @@
+[{"plant":{"id":15},"buyer":{"id":2},"swapOffer":"I dont have a begonia but would you swap for a false hemp instead?"},
+{"plant":{"id":14},"buyer":{"id":1},"swapOffer":"I have a eastern silver aster and give you a shaving of it for the swap"},
+{"plant":{"id":4},"buyer":{"id":2},"swapOffer":"offering a Trillium flexipes seed (white)"},
+{"plant":{"id":2},"buyer":{"id":5},"swapOffer":"I can swap you for an oak moss (full grown)"},
+{"plant":{"id":14},"buyer":{"id":3},"swapOffer":"can I buy the plant instead?"},
+{"plant":{"id":8},"buyer":{"id":3}},
+{"plant":{"id":12},"buyer":{"id":1}}]
+
+
+//1. update to rejcted
+ //2. post after 5 has been rejected, leave pending
+  //3.leave pending
+  //4.update to accepted
+  //5.update to rejected
+  //6. price
+ //7. price
