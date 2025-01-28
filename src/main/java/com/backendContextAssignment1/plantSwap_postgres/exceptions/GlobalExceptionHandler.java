@@ -43,11 +43,15 @@ public class GlobalExceptionHandler {
     //Other errors (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneral(Exception exception) {
-        String ErrorMessage = "An unexpected error occurred (see detailed message below):\n\n";
-        if (exception.getCause() instanceof ConstraintViolationException) {
-            ErrorMessage = "Username and/or email already exists for another user (see detailed message below):\n\n";
+        String ErrorMessage = "";
+        if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("username")) {
+            ErrorMessage = "Username is already registered to another user in the database (username must be unique)";
+        } else if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("email")) {
+            ErrorMessage = "Email is already registered to another user in the database (email must be unique)";
+        } else {
+            ErrorMessage = "Unexpected server error (see detailed message below):\n\n" +exception.getMessage();
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage+exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage);
     }
 
 }
