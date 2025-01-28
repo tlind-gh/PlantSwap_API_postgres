@@ -46,7 +46,7 @@ public class UserService {
     public void deleteUserById(Long id) {
         User user = validateUserIdAndReturnUser(id);
         if (!plantRepository.findByUserAndAvailabilityStatus(user, PlantAvailabilityStatusEnum.RESERVED).isEmpty()) {
-            throw new UnsupportedOperationException("users referenced by plants with pending transactions cannot be deleted");
+            throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
         }
         if (!transactionRepository.findByBuyer(user).isEmpty()) {
             throw new UnsupportedOperationException("users with pending transactions cannot be deleted");

@@ -62,8 +62,12 @@ public class PlantService {
             throw new IllegalArgumentException("plants with accepted or pending transactions cannot be updated");
         }
 
+        if (newPlant.getAvailabilityStatus() != existingPlant.getAvailabilityStatus()) {
+            throw new IllegalArgumentException("plants status cannot be updated");
+        }
+
         if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
-            throw new IllegalArgumentException("user id cannot be updated changed");
+            throw new IllegalArgumentException("user id cannot be updated");
         }
 
         validateHasEitherSwapOrPriceNotBoth(newPlant);
