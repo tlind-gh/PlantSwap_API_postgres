@@ -5,12 +5,3 @@
 {"plant":{"id":14},"buyer":{"id":3},"swapOffer":"can I buy the plant instead?"},
 {"plant":{"id":8},"buyer":{"id":3}},
 {"plant":{"id":12},"buyer":{"id":1}}]
-
-
-//1. update to rejcted
- //2. post after 5 has been rejected, leave pending
-  //3.leave pending
-  //4.update to accepted
-  //5.update to rejected
-  //6. price
- //7. price

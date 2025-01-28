@@ -2,10 +2,7 @@ package com.backendContextAssignment1.plantSwap_postgres.models;
 
 import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.*;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -23,20 +20,23 @@ public class Plant {
     @NotNull(message = "user id cannot be null")
     private User user;
 
-    @Column(name = "common_name", nullable = false, length = 50)
+    @Column(name = "common_name", nullable = false, length = 100)
     @NotNull(message = "commonName cannot be null")
-    @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long")
+    @NotEmpty(message = "commonName cannot be empty")
+    @Size(max = 100, message = "commonName must not exceed 100 characters")
     private String commonName;
 
-    @Column(name = "plant_family", nullable = false, length = 50)
-    @NotNull(message = "plant_family cannot be null")
-    @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long")
+    @Column(name = "plant_family", nullable = false, length = 100)
+    @NotNull(message = "plantFamily cannot be null")
+    @NotEmpty(message = "plantFamily cannot be empty")
+    @Size(max = 100, message = "plantFamily must not exceed 100 characters")
     private String plantFamily;
 
-    @Column(name = "plant_genus", nullable = false, length = 50)
-    @NotNull(message = "plant_genus cannot be null")
-    @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long")
-    private String plantGenus;
+    @Column(name = "plant_species", nullable = false, length = 100)
+    @NotNull(message = "plantSpecies cannot be null")
+    @NotEmpty(message = "plantSpecies cannot be empty")
+    @Size(max = 100, message = "plantSpecies must not exceed 100 characters")
+    private String plantSpecies;
 
     @Column(name = "plant_size", nullable = false)
     @NotNull(message = "plantSize cannot be null")
@@ -53,9 +53,11 @@ public class Plant {
     private int careDifficulty;
 
     @Column(name = "light_requirements", nullable = false)
+    @NotNull(message = "lightRequirement cannot be null")
     private PlantLightRequirementEnum lightRequirement;
 
     @Column(name = "water_requirements", nullable = false)
+    @NotNull(message = "waterRequirement cannot be null")
     private PlantWaterRequirementEnum waterRequirement;
 
     @Column(name = "image_url", length = 500)
@@ -63,7 +65,7 @@ public class Plant {
     private String imageURL;
 
     @Column(name = "description", length = 1000)
-    @Size(max = 500, message = "description cannot be longer than 500 characters")
+    @Size(max = 1000, message = "description cannot be longer than 1000 characters")
     private String description;
 
     @Column(name = "price")
@@ -114,28 +116,28 @@ public class Plant {
         this.user = user;
     }
 
-    public @NotNull(message = "commonName cannot be null") @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long") String getCommonName() {
+    public @NotNull(message = "commonName cannot be null") @NotEmpty(message = "commonName cannot be empty") @Size(max = 100, message = "commonName must not exceed 100 characters") String getCommonName() {
         return commonName;
     }
 
-    public void setCommonName(@NotNull(message = "commonName cannot be null") @Size(min = 1, max = 50, message = "commonName must between 1 and 50 characters long") String commonName) {
+    public void setCommonName(@NotNull(message = "commonName cannot be null") @NotEmpty(message = "commonName cannot be empty") @Size(max = 100, message = "commonName must not exceed 100 characters") String commonName) {
         this.commonName = commonName;
     }
 
-    public @NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long") String getPlantFamily() {
+    public @NotNull(message = "plantFamily cannot be null") @NotEmpty(message = "plantFamily cannot be empty") @Size(max = 100, message = "plantFamily must not exceed 100 characters") String getPlantFamily() {
         return plantFamily;
     }
 
-    public void setPlantFamily(@NotNull(message = "plant_family cannot be null") @Size(min = 1, max = 50, message = "plantFamily must between 1 and 50 characters long") String plantFamily) {
+    public void setPlantFamily(@NotNull(message = "plantFamily cannot be null") @NotEmpty(message = "plantFamily cannot be empty") @Size(max = 100, message = "plantFamily must not exceed 100 characters") String plantFamily) {
         this.plantFamily = plantFamily;
     }
 
-    public @NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long") String getPlantGenus() {
-        return plantGenus;
+    public @NotNull(message = "plantSpecies cannot be null") @NotEmpty(message = "plantSpecies cannot be empty") @Size(max = 100, message = "plantSpecies must not exceed 100 characters") String getPlantSpecies() {
+        return plantSpecies;
     }
 
-    public void setPlantGenus(@NotNull(message = "plant_genus cannot be null") @Size(min = 1, max = 50, message = "plantGenus must between 1 and 50 characters long") String plantGenus) {
-        this.plantGenus = plantGenus;
+    public void setPlantSpecies(@NotNull(message = "plantSpecies cannot be null") @NotEmpty(message = "plantSpecies cannot be empty") @Size(max = 100, message = "plantSpecies must not exceed 100 characters") String plantSpecies) {
+        this.plantSpecies = plantSpecies;
     }
 
     public @NotNull(message = "plantSize cannot be null") PlantSizeEnum getPlantSize() {
@@ -165,19 +167,19 @@ public class Plant {
         this.careDifficulty = careDifficulty;
     }
 
-    public PlantLightRequirementEnum getLightRequirement() {
+    public @NotNull(message = "lightRequirement cannot be null") PlantLightRequirementEnum getLightRequirement() {
         return lightRequirement;
     }
 
-    public void setLightRequirement(PlantLightRequirementEnum lightRequirement) {
+    public void setLightRequirement(@NotNull(message = "lightRequirement cannot be null") PlantLightRequirementEnum lightRequirement) {
         this.lightRequirement = lightRequirement;
     }
 
-    public PlantWaterRequirementEnum getWaterRequirement() {
+    public @NotNull(message = "waterRequirement cannot be null") PlantWaterRequirementEnum getWaterRequirement() {
         return waterRequirement;
     }
 
-    public void setWaterRequirement(PlantWaterRequirementEnum waterRequirement) {
+    public void setWaterRequirement(@NotNull(message = "waterRequirement cannot be null") PlantWaterRequirementEnum waterRequirement) {
         this.waterRequirement = waterRequirement;
     }
 
@@ -189,11 +191,11 @@ public class Plant {
         this.imageURL = imageURL;
     }
 
-    public @Size(max = 500, message = "description cannot be longer than 500 characters") String getDescription() {
+    public @Size(max = 1000, message = "description cannot be longer than 1000 characters") String getDescription() {
         return description;
     }
 
-    public void setDescription(@Size(max = 500, message = "description cannot be longer than 500 characters") String description) {
+    public void setDescription(@Size(max = 1000, message = "description cannot be longer than 1000 characters") String description) {
         this.description = description;
     }
 

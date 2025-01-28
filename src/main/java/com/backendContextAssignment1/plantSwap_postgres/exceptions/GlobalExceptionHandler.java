@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnsupportedOperationException.class)
-    public ResponseEntity<String> handleUnsupportedObjectDeletionError(UnsupportedOperationException exception) {
+    public ResponseEntity<String> handleUnsupportedObjectDeletion(UnsupportedOperationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     //Other errors (500)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneral(Exception exception) {
+    public ResponseEntity<String> handleGeneralException(Exception exception) {
         String ErrorMessage = "";
         if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("username")) {
             ErrorMessage = "Username is already registered to another user in the database (username must be unique)";

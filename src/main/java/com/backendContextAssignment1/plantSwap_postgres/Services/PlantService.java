@@ -70,7 +70,7 @@ public class PlantService {
 
         existingPlant.setCommonName(newPlant.getCommonName());
         existingPlant.setPlantFamily(newPlant.getPlantFamily());
-        existingPlant.setPlantGenus(newPlant.getPlantGenus());
+        existingPlant.setPlantSpecies(newPlant.getPlantSpecies());
         existingPlant.setPlantStage(newPlant.getPlantStage());
         existingPlant.setPlantSize(newPlant.getPlantSize());
         existingPlant.setCareDifficulty(newPlant.getCareDifficulty());
