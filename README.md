@@ -52,14 +52,14 @@ Users can purchase plants put up as for sale by other users, or propose a plant 
 - A user can have maximum 10 plant listings with status available at the same time (no limit on number of not available plants for one in user in the database)
 - A user cannot be deleted if it owns plants with pending transaction or made a transaction offer that has status pending or accepted
   - If the plant has a pending transaction, the user must first accept/reject this transaction, and if the user has a pending transaction they should first delete this transaction
-  - The reason for not allowing users with accepted transaction to be deleted is that the delete option in the database is set to cascade, so this would delete the accepted transactions leaving the plants with status not available but without an accepted transaction, this is something I have been trying to avoid in the rest of the program, to preserve eitet both the plant and the transaction or delete both (deleting the plant). Therefor users with accepted transcations cannot be deleted, even though this is also a bit annoying/suboptimal
+  - The reason for not allowing users with accepted transaction to be deleted is that the delete option in the database is set to cascade, so this would delete the accepted transactions leaving the plants with status not available but without an accepted transaction, this is something I have been trying to avoid in the rest of the program, to preserve either both the plant and the transaction or delete both (deleting the plant). Therefor users with accepted transactions cannot be deleted, even though this is also a bit annoying/suboptimal
 - Deleting a user deletes the transactions of the user, plants owned by that user and the transactions linked to those plants
 
 **Plants**
 - A plant listing can only have 1 owner, but one user can own many plants
 - A plant listing must have a common name, and scientific name (both family and species), since this is a serious plant swapping app where such info is essential
 - A plant listing must have a specified care difficulty between 1 and 5 (5 being very difficult, i.e., requires a lot of special care)
-- If plant size, stage, light requirement and water requirement are not specified when adding a new plant, they are autoset to "unspecified"
+- If plant size, stage, light requirement and water requirement are not specified when adding a new plant, they are auto-set to "unspecified"
 - A plant must be either for sale (and then have a price specified) OR for swap (and then have swap conditions) - exactly one of these fields must be null.
 - A plant with a pending transaction cannot be deleted (the transaction must first be rejected/accepted/deleted)
 - Deleting a plant deletes all transactions linked to that plant
