@@ -3,6 +3,7 @@ package com.backendContextAssignment1.plantSwap_postgres.Services;
 import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
 import com.backendContextAssignment1.plantSwap_postgres.models.User;
 import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
+import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatusEnum;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.TransactionRepository;
 import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
@@ -50,12 +51,12 @@ public class UserService {
     NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant.*/
     public void deleteUserById(Long id) {
         User user = validateUserIdAndReturnUser(id);
-        //users with pending transaction or plants with pending transactions cannot be deleted.
+        //users with pending or accepted transaction, or plants with pending transactions cannot be deleted.
         if (!plantRepository.findByUserAndAvailabilityStatus(user, PlantAvailabilityStatusEnum.RESERVED).isEmpty()) {
             throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
         }
-        if (!transactionRepository.findByBuyer(user).isEmpty()) {
-            throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
+        if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.ACCEPTED).isEmpty() && !transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
+            throw new UnsupportedOperationException("users with pending or accepted transactions cannot be deleted");
         }
         userRepository.deleteById(id);
     }
