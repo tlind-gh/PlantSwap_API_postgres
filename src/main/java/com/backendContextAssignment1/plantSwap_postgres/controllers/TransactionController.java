@@ -40,7 +40,7 @@ public class TransactionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
-            transactionService.deleteTransactionById(id);
+        transactionService.deleteTransactionById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

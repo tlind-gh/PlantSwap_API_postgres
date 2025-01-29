@@ -21,33 +21,42 @@ public class PlantService {
     }
 
     public Plant createPlant(Plant plant) {
+        //check that user exists in database
         if (!userRepository.existsById(plant.getUser().getId())) {
             throw new NoSuchElementException("user id does not correspond to any existing user");
         }
+        //check if user already had the maximum allowed nr of available plants
         if (plantRepository.findByUserAndAvailabilityStatus(plant.getUser(), PlantAvailabilityStatusEnum.AVAILABLE).size() >= 10) {
             throw new IllegalArgumentException("user already has 10 available plants in database, no new plants can be added for this user");
         }
+
+        //check that exactly one of two fields is null: "price" and "swapConditions" (plant must either be for sale or for swap, but not both)
         validateHasEitherSwapOrPriceNotBoth(plant);
 
-        //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
+        //sets createdAt and updatedAt timestamps (overriding any potential user input from RequestBody for these variables)
         plant.setCreatedAt(LocalDateTime.now());
         plant.setUpdatedAt(null);
 
         return plantRepository.save(plant);
     }
 
+    //get all plants in database
     public List<Plant> getAllPlants() {
         return plantRepository.findAll();
     }
 
+    //get a plant by id
     public Plant getPlantById(Long id) {
         return validatePlantIdAndReturnPlant(id);
     }
 
+    //get all plants with availabilityStatus = AVAILABLE
     public List<Plant> getAvailablePlants() {
         return plantRepository.findByAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
     }
 
+    /*delete a plant using id, plants with availabilityStatus = RESERVED (i.e., with a pending transactions)
+    NB! delete type = cascade: also deletes the transactions for that plant.*/
     public void deletePlantById(Long id) {
         if (validatePlantIdAndReturnPlant(id).getAvailabilityStatus() == PlantAvailabilityStatusEnum.RESERVED) {
             throw new UnsupportedOperationException("plants with pending transactions cannot be deleted");
@@ -58,18 +67,23 @@ public class PlantService {
     //will update ALL fields for a plant in accordance with a new plant (from RequestBody through PlantController)
     public Plant updatePlant(Long id, Plant newPlant) {
         Plant existingPlant = validatePlantIdAndReturnPlant(id);
+        /*check that plant is not reserved or already sold (plants with pending or accepted transactions should not be changed
+        since their data should remain accurate to the closed or ongoing transactions*/
         if (existingPlant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
             throw new IllegalArgumentException("plants with accepted or pending transactions cannot be updated");
         }
 
+        //plant status is only updated via transactions
         if (newPlant.getAvailabilityStatus() != existingPlant.getAvailabilityStatus()) {
             throw new IllegalArgumentException("plants status cannot be updated");
         }
 
+        //plants listing cannot change owner (plant can be swapped or sold, but the plant listing does not transfer owner)
         if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
             throw new IllegalArgumentException("user id cannot be updated");
         }
 
+        //validate that the updated plant has price OR swapConditions
         validateHasEitherSwapOrPriceNotBoth(newPlant);
 
         existingPlant.setCommonName(newPlant.getCommonName());

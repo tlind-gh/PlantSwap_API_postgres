@@ -31,20 +31,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //get all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    //get single user by id
     public User getUserById(Long id) {
         return validateUserIdAndReturnUser(id);
     }
 
+    //get all plants owned by a user using user id
     public List<Plant> getPlantsByUserId(Long id) {
         return plantRepository.findByUser(validateUserIdAndReturnUser(id));
     }
 
+    /*delete a user using user id
+    NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant.*/
     public void deleteUserById(Long id) {
         User user = validateUserIdAndReturnUser(id);
+        //users with pending transaction or plants with pending transactions cannot be deleted.
         if (!plantRepository.findByUserAndAvailabilityStatus(user, PlantAvailabilityStatusEnum.RESERVED).isEmpty()) {
             throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
         }

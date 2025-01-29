@@ -25,29 +25,33 @@ public class TransactionService {
         this.plantRepository = plantRepository;
     }
 
+    //create and add new transaction
     public Transaction createTransaction(Transaction transaction) {
+        //check that user exists
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
             throw new NoSuchElementException("buyer id does not correspond to any existing user");
         }
+        //check that plant exists
         if (!plantRepository.existsById(transaction.getPlant().getId())) {
             throw new NoSuchElementException("plant id does not correspond to any existing user");
         }
 
-        //get plant for the transaction to check that the new transaction corresponds to data in plant
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
+        //check that the plant for the transaction is available
         if (plant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
             throw new IllegalArgumentException("plant is reserved or not available");
         }
+        //check that the user making the offer is not the owner of the plant
         if (transaction.getBuyer().getId() == plant.getUser().getId()) {
            throw new IllegalArgumentException("buyer id cannot be the same as user id for the owner of the plant for the transaction");
         }
+        //check that transaction has swapOffer if the plant has swapConditions (or does not have swapOffer, if the plant is for sale and not swap)
         if (plant.getPrice() == null && transaction.getSwapOffer() == null || plant.getPrice() != null && transaction.getSwapOffer() != null) {
             throw new IllegalArgumentException("transaction for plants with swap conditions must have a swap offer, transaction for plants with a price must NOT have a swap offer");
         }
 
-        //update status for transaction and plant depending on if it is for swap or for sale
+        //set status for transaction and update status for plant (SWAP_PENDING/RESERVED or ACCEPTED/NOT_AVAILABLE, depending on if it is for swap or for sale)
         TransactionStatusEnum status = (plant.getPrice() == null) ? TransactionStatusEnum.SWAP_PENDING : TransactionStatusEnum.ACCEPTED;
-
         updateTransactionAndPlantStatus(transaction, status);
 
         //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
@@ -57,9 +61,10 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    //method for both rejecting and accepting pending transactions
+    //method for both rejecting and accepting pending transactions, depending on boolean input argument
     public Transaction updateTransactionStatus(Long id, boolean isAccepted) {
         Transaction transaction = validateTransactionIdAndReturnTransaction(id);
+        //check that transaction is pending
         validateSwapPendingStatus(transaction);
 
         //set statusEnum according to boolean input
@@ -80,14 +85,17 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    //get all transactions
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
+    //get single transaction using id
     public Transaction getTransactionById(Long id) {
         return validateTransactionIdAndReturnTransaction(id);
     }
 
+    //get all transactions for a user using user id
     public List<Transaction> getTransactionsByUserId(Long userId) {
         return transactionRepository.findByBuyer(userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));

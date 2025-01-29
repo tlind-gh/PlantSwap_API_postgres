@@ -87,14 +87,8 @@ public class Plant {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    //constructor sets default values for the enum type variables, are overwritten if @RequestBody contains another value
     public Plant() {
-        //should this be here or in Controller class???
-        /*
-        if ((price == null && swapConditions == null) || (price != null && swapConditions != null)){
-            throw new IllegalArgumentException();
-        }
-      */
-        //maybe move to service class?
         plantSize = PlantSizeEnum.UNSPECIFIED;
         plantStage = PlantStageEnum.OTHER;
         waterRequirement = PlantWaterRequirementEnum.UNSPECIFIED;
