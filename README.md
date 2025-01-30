@@ -1,8 +1,8 @@
-# plantSwap
+# PlantSwap API
 
-**This is a REST API using Spring boot and postgres. The application the backend part of a plantSwap service with which users can publish plant listings and acquire plant listed by other users.**
+**This is a REST API using Spring boot and postgres (and run via a Docker container). The application the backend part of a plantSwap service with which users can publish plant listings and acquire plant listed by other users.**
 
-**The application is called plantSwap, but does actually allow for both selling and swapping plants (let's pretend that the platform started as a place for users to swap plants, and then added a functionality for selling plants but kept the name plantSwap)**
+**The application is called PlantSwap, but does actually allow for both selling and swapping plants (let's pretend that the platform started as a place for users to swap plants, and then added a functionality for selling plants but kept the name plantSwap)**
 
 ---
 ## Table of Content
@@ -22,7 +22,7 @@
 
 ## Getting started
 ### Prerequisites
-- postgres
+- postgreSQL
 - Docker
 - Postman
 
@@ -71,7 +71,7 @@
 ## Functionality
 
 ### General description
-The application is a REST API using Spring boot and postgres. The application lacks a frontend implementation and is best tested using Postman or equivalent.
+The application is a REST API using Spring boot and postgreSQL. The application lacks a frontend implementation and is best tested using Postman or equivalent.
 
 The application has three main model classes: 1) User, 2) Plant and 3) Transaction. An instance of the User class represent a registered user on the plantSwap service. An instance of the Plant class represents a plant listing posted by a user. An instance of the Transaction class represents an offer on an plant listing by a user on the platform. 
 
