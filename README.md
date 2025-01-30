@@ -64,8 +64,7 @@
 2. run the PlantSwapPostgresApplication from your IDE
 3. test the application using Postman (/src/main/ contains json files with data that can be used for testing)
 
-#### *Link to Postman documentation*
-https://documenter.getpostman.com/view/40787093/2sAYQiASYM
+***Link to Postman documentation:*** *https://documenter.getpostman.com/view/40787093/2sAYQiASYM*
 
 ---
 
@@ -123,7 +122,7 @@ Transaction that which contain swap offers must be accepted by the owner of the 
 
 ### Possible improvements
 - Implementing hash and salting of the user password data
--  Limiting the common name and scientific names for the plants to actual plants (by importing a data from a database of plant names?)
+- Limiting the common name and scientific names for the plants to actual plants (by importing a data from a database of plant names?)
 - Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class (alternativley move the getTransactionsByUserID to the UserService class, to be consistent)
 - Allow for deleting a user with accepted transactions and set user field to null for these transactions
   - This would mean changing the cascade setting for deleting and also allowing null for the buyer_id field in the transaction table
