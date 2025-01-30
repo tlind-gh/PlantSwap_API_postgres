@@ -1,51 +1,85 @@
-# plantSwap application
+# plantSwap
 
-## General description
-This is the backend part of a platform for swapping and buying plants. The platform allows for users to register and publish plants that they wish to either sell or swap for another plant.
-Users can purchase plants put up as for sale by other users, or propose a plant they are willing to swap for a plant that a another user has published as being for swap.
+**This is a REST API using Spring boot and postgres. The application the backend part of a plantSwap service with which users can publish plant listings and acquire plant listed by other users.**
 
-## Running the app
-### Prerequisite installations
-- postgres (change port in docker-compose.yml file if you do not run postgres on the default port)
+**The application is called plantSwap, but does actually allow for both selling and swapping plants (let's pretend that the platform started as a place for users to swap plants, and then added a functionality for selling plants but kept the name plantSwap)**
+
+---
+## Table of Content
+1. Getting started
+   1. Prerequisites
+   2. Installation
+   3. Usage
+2. Functionality
+   1. General description
+   2. Detailed application rules 
+   3. Limitations 
+   4. Possible improvements 
+3. Additional info
+   1. Retired Transactions PUT methods
+
+---
+
+## Getting started
+### Prerequisites
+- postgres
 - Docker
+- Postman
 
-### Procedure
-- clone repository
-- add a .env file (in the source folder) and copy-paste the code below into it (change relevant fields to the username and password for your postgres user)
-    #### /.env
+### Installation
+1. clone the repository and open your IDE of choice
+    ```
+    git clone https://github.com/tlind-gh/BackendContext_assignment1_postgres.git
+    ```
+2. add a .env file (in the source folder) and copy-paste the code below into it (change relevant fields to the username and password for your postgres user)
+    #### */.env*
+    
     ```
     POSTGRES_DB: plantSwap
     POSTGRES_USER: {your postgres username}
     POSTGRES_PASSWORD: {your postgres password}
     ```
     
-- add a application.yml file (in /src/main/resources) and copy-paste the code below into it (change relevant fields to the username and password for your postgres user) 
-    #### /src/main/resources/application.yml
+3. add a application.yml file (in /src/main/resources) and copy-paste the code below into it (change relevant fields to the username and password for your postgres user) 
+
+    #### */src/main/resources/application.yml*
     ```
-  spring:
-     datasource:
-      url: jdbc:postgresql://localhost:5432/plantSwap
-      username: {your postgres username}
-      password: {your postgres password}
-  jpa:
-    hibernate:
+    spring:
+      datasource:
+        url: jdbc:postgresql://localhost:5432/plantSwap
+        username: {your postgres username}
+        password: {your postgres password}
+    jpa:
+      hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     ```
-- create and empty postgres database called "plantSwap" (e.g., using pgAdmin)
-- start a detached instance of docker by running the "docker-compose up -d" command in project folder
-- start the PlantSwapPostgresApplication
-- test the application using Postman (/src/main/ contains json files with data that can be used for testing)
+4. create and empty postgres database called "plantSwap" (e.g., using pgAdmin)
 
+### Usage
+1. start a detached instance of docker by running the "docker-compose up -d" command in the folder of the cloned repository
+2. run the PlantSwapPostgresApplication from your IDE
+3. test the application using Postman (/src/main/ contains json files with data that can be used for testing)
+
+---
 
 ## Functionality
 
-### Features
-**General**
-- All entities have timestamps for when they were created and last updated (updated initially set to null) 
+### General description
+The application is a REST API using Spring boot and postgres. The application lacks a frontend implementation and is best tested using Postman or equivalent.
+
+The application has three main model classes: 1) User, 2) Plant and 3) Transaction. An instance of the User class represent a registered user on the plantSwap service. An instance of the Plant class represents a plant listing posted by a user. An instance of the Transaction class represents an offer on an plant listing by a user on the platform. 
+
+The application allows a user to publish plant listings with details about the plant, and a price (if the plant is for sale) or a swap conditions (specifying what kind of plant the user wants in exchange for the listed plant). A plant listing must either be for sale (and have a price) or for swap (and have swap conditions), but never both.
+
+Other users on the platform can buy plants which published as being for sale, and make swap offers on plant listings that are for swap.
+Transactions which are of the purchase type are immediately accepted, as the price on the listing has been met by the buyer and both parties are thereby considered to be in agreement.
+Transaction that which contain swap offers must be accepted by the owner of the plant listing before being accepted, as the swap offer might not be agreeable to the plant owner and they may wish to reject the proposed swap. 
+
+### Detailed rules by Class
 
 **Users**
 - A user must have a unique username and a unique email address
@@ -75,55 +109,65 @@ Users can purchase plants put up as for sale by other users, or propose a plant 
 - Swap offers of pending transactions can be edited, should the "buyer" want to update/change their offer
 - Accepted transaction cannot be deleted (this is to preserve the data of the transaction for as long as the plant is still in the database, and not have not_available plants w/o transactions)
 
+**All models**
+- All entities have timestamps for when they were created and last updated (updated initially set to null)
+
 ### Limitations
-- Common name, plant family and plant species can be filled in freely. It would be better if it was restricted to plants that actually exists and that choosing a plant family also narrowed down the options for the plant species to actual specied within that family (and also that the app checked correlation between common name and scientific name)
+- Common name, plant family and plant species can be filled in freely. It would be better if it was restricted to plants that actually exists and that choosing a plant family also narrowed down the options for the plant species to actual specie within that family (and also that the app checked correlation between common name and scientific name)
 - The LocalTimeDate format used for the created_at and updated_at fields does not include a timezone
+- Passwords are not encrypted (i.e., are saved in raw format in the database)
+
 
 ### Possible improvements
-- Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class
+- Implementing hash and salting of the user password data
+-  Limiting the common name and scientific names for the plants to actual plants (by importing a data from a database of plant names?)
+- Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class (alternativley move the getTransactionsByUserID to the UserService class, to be consistent)
 - Allow for deleting a user with accepted transactions and set user field to null for these transactions
   - This would mean changing the cascade setting for deleting and also allowing null for the buyer_id field in the transaction table
-- Limiting the common name and scientific names for the plants to actual plants (by importing a data from a database of plant names?)
 
+---
 
+## Additional info
 
-## Retired Transaction update methods
+### Retired Transaction PUT methods
 The follow Transaction methods (in TransactionService and TransactionController) was removed after it became superfluous
 due to the addition of three patch-methods (for updating the SwapOffer, or rejecting/accepting a Transaction). These patch methods
 cover all utilities of the update put-method, since the update method did not allow for updating the plant or user id.
 
-### TransactionService class method
+#### *TransactionService class method*
 ```
-public Transaction updateTransaction(Long id, Transaction newTransaction) {
-Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
-if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
-throw new IllegalArgumentException("plant id and buyer id cannot be changed");
+  public Transaction updateTransaction(Long id, Transaction newTransaction) {
+      
+      Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
+      
+      if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
+          throw new IllegalArgumentException("plant id and buyer id cannot be changed");
+      }
+
+      if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
+          throw new IllegalArgumentException("status of accepted or rejected transactions cannot be changed");
+      }
+
+      if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
+          throw new IllegalArgumentException("swap offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
+      }
+
+      //if status is updated from pending to accepted or rejected, then update the plant status
+      if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
+          updateTransactionAndPlantStatus(existingTransaction, newTransaction.getStatus());
+      }
+
+      existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
+      existingTransaction.setUpdatedAt(LocalDateTime.now());
+
+      return transactionRepository.save(existingTransaction);
+  }
+```
+
+#### *TransactionController class method*
+```
+@PutMapping("/{id}")
+public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
+   return new ResponseEntity<>(transactionService.updateTransaction(id, transaction), HttpStatus.OK);
 }
-
-        if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
-            throw new IllegalArgumentException("status of accepted or rejected transactions cannot be changed");
-        }
-
-        if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
-            throw new IllegalArgumentException("swap offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
-        }
-
-        //if status is updated from pending to accepted or rejected, then update the plant status
-        if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
-            updateTransactionAndPlantStatus(existingTransaction, newTransaction.getStatus());
-        }
-
-        existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
-        existingTransaction.setUpdatedAt(LocalDateTime.now());
-
-        return transactionRepository.save(existingTransaction);
-    }
-```
-
-### TransactionController class method 
-```
-    @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
-        return new ResponseEntity<>(transactionService.updateTransaction(id, transaction), HttpStatus.OK);
-    }
 ```
