@@ -9,6 +9,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
+/*Instances of the Transaction class holds information about a proposed or performed transaction.
+A Transaction is posted by a user (stored in Buyer variable) for an existing plant listing (stored in Plant variable).
+If the plant is for sale, the Transaction has status ACCEPTED immediately, and if the plant is for swap the transaction has
+status SWAP_PENDING (awaiting acceptance or rejection from the owner of the plant)*/
+
 @Entity @Table(name = "transactions")
 public class Transaction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

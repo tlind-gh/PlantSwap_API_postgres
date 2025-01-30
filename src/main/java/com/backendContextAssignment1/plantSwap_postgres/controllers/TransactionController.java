@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//REST controller for the Transaction class. Handles Transactions indirectly via TransactionService class.
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {

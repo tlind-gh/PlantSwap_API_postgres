@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//REST controller for the User class. Handles Users indirectly via UserService class.
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -34,7 +35,6 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
-    //I would have put this in plants with "/{user_id}"
     @GetMapping("/{id}/plants")
     public ResponseEntity<List<Plant>> getUserPlants(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getPlantsByUserId(id), HttpStatus.OK);

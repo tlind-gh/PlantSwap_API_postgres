@@ -9,6 +9,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+
+/*Instances of the Plant class holds information about a plant that has been put up for sale or swap by a user
+Contains information about the plant itself and a price or a swap conditions (what the owner of the plant want to swap the plant for)*/
 @Entity @Table(name = "plants")
 public class Plant {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//REST controller for the Plant class. Handles Plants indirectly via PlantService class.
 @RestController
 @RequestMapping("/api/plants")
 public class PlantController {

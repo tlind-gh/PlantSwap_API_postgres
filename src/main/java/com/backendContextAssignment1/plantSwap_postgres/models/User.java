@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
+/*Instances of the User class holds information about a registered user on the platform.
+Usernames and user email must be unique*/
 @Entity
 @Table(name = "users")
 public class User {
