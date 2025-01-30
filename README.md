@@ -122,8 +122,10 @@ Transaction that which contain swap offers must be accepted by the owner of the 
 
 ### Possible improvements
 - Implementing hash and salting of the user password data
-- Limiting the common name and scientific names for the plants to actual plants (by importing a data from a database of plant names?)
-- Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class (alternativley move the getTransactionsByUserID to the UserService class, to be consistent)
+- Removing the availabilityStatus from the plant class, since this is currently corresponds to the status of the transactions for the plant (i.e., if there is a pending transaction the plant status is always reserved). Therefor this is technically double storing of availability status data in the database, and this variable could be removed from the database without loosing any information.  
+- Limiting the common name and scientific names for the plants to actual plants (e.g., by importing data from an external database)
+  - If this was implemented the common name and scientific names should (for proper database normalization) be replaced by a single field with a foreign key in the plants database table, which is a reference to a plant_species table with all the plant name information.
+- Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class (alternatively move the getTransactionsByUserID to the UserService class, to be consistent)
 - Allow for deleting a user with accepted transactions and set user field to null for these transactions
   - This would mean changing the cascade setting for deleting and also allowing null for the buyer_id field in the transaction table
 
