@@ -1,12 +1,14 @@
 package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
-import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.PlantAvailabilityStatusEnum;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
+import com.backendCourseSpring2025.PlantSwapAPI.repositories.TransactionRepository;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -14,10 +16,12 @@ import java.util.NoSuchElementException;
 public class PlantService {
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    public PlantService(PlantRepository plantRepository, UserRepository userRepository) {
+    public PlantService(PlantRepository plantRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
         this.plantRepository = plantRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public Plant createPlant(Plant plant) {
@@ -26,7 +30,13 @@ public class PlantService {
             throw new NoSuchElementException("user id does not correspond to any existing user");
         }
         //check if user already had the maximum allowed nr of available plants
-        if (plantRepository.findByUserAndAvailabilityStatus(plant.getUser(), PlantAvailabilityStatusEnum.AVAILABLE).size() >= 10) {
+        int nrOfAvailablePlantsforUser = 0;
+        for (Plant p : plantRepository.findByUser(plant.getUser())) {
+            if (isPlantAvailable(p)) {
+                nrOfAvailablePlantsforUser++;
+            }
+        }
+        if (nrOfAvailablePlantsforUser >= 10) {
             throw new IllegalArgumentException("user already has 10 available plants in database, no new plants can be added for this user");
         }
 
@@ -50,15 +60,28 @@ public class PlantService {
         return validatePlantIdAndReturnPlant(id);
     }
 
+    //get all plants for a user using user id
+    public List<Plant> getPlantByUserId(Long userId) {
+        return plantRepository.findByUser(userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));
+    }
+
     //get all plants with availabilityStatus = AVAILABLE
     public List<Plant> getAvailablePlants() {
-        return plantRepository.findByAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
+        List<Plant> availablePlants = new ArrayList<>();
+        for (Plant plant : plantRepository.findAll()) {
+            if (isPlantAvailable(plant)) {
+                availablePlants.add(plant);
+            }
+        }
+        return availablePlants;
     }
 
     /*delete a plant using id, plants with availabilityStatus = RESERVED (i.e., with a pending transactions)
     NB! delete type = cascade: also deletes the transactions for that plant.*/
     public void deletePlantById(Long id) {
-        if (validatePlantIdAndReturnPlant(id).getAvailabilityStatus() == PlantAvailabilityStatusEnum.RESERVED) {
+        Plant plant = validatePlantIdAndReturnPlant(id);
+        if (!transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
             throw new UnsupportedOperationException("plants with pending transactions cannot be deleted");
         }
         plantRepository.deleteById(id);
@@ -69,13 +92,8 @@ public class PlantService {
         Plant existingPlant = validatePlantIdAndReturnPlant(id);
         /*check that plant is not reserved or already sold (plants with pending or accepted transactions should not be changed
         since their data should remain accurate to the closed or ongoing transactions*/
-        if (existingPlant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
+        if (!isPlantAvailable(existingPlant)) {
             throw new IllegalArgumentException("plants with accepted or pending transactions cannot be updated");
-        }
-
-        //plant status is only updated via transactions
-        if (newPlant.getAvailabilityStatus() != existingPlant.getAvailabilityStatus()) {
-            throw new IllegalArgumentException("plants status cannot be updated");
         }
 
         //plants listing cannot change owner (plant can be swapped or sold, but the plant listing does not transfer owner)
@@ -115,5 +133,10 @@ public class PlantService {
         if ((plant.getPrice() == null && plant.getSwapConditions() == null) || (plant.getPrice() != null && plant.getSwapConditions() != null)) {
             throw new IllegalArgumentException("plant must either have price or swapOffer but not both");
         }
+    }
+
+    private boolean isPlantAvailable(Plant plant) {
+        return transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.ACCEPTED).isEmpty()
+                && transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty();
     }
 }

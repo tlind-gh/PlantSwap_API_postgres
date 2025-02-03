@@ -2,7 +2,6 @@ package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
-import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.PlantAvailabilityStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.TransactionRepository;
@@ -32,6 +31,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //update user, full body
+    public User updateUser(Long id, User newUser) {
+        User existingUser = validateUserIdAndReturnUser(id);
+
+        existingUser.setUsername(newUser.getUsername());
+        existingUser.setPassword(newUser.getPassword());
+        existingUser.setEmail(newUser.getEmail());
+        existingUser.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(existingUser);
+    }
+
     //get all users
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -42,34 +53,23 @@ public class UserService {
         return validateUserIdAndReturnUser(id);
     }
 
-    //get all plants owned by a user using user id
-    public List<Plant> getPlantsByUserId(Long id) {
-        return plantRepository.findByUser(validateUserIdAndReturnUser(id));
-    }
 
     /*delete a user using user id
-    NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant.*/
+    NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant.
+    Transaction directly tied to the user are not deleted (buyer set to null instead)*/
     public void deleteUserById(Long id) {
         User user = validateUserIdAndReturnUser(id);
         //users with pending or accepted transaction, or plants with pending transactions cannot be deleted.
-        if (!plantRepository.findByUserAndAvailabilityStatus(user, PlantAvailabilityStatusEnum.RESERVED).isEmpty()) {
-            throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
+        for (Plant plant : plantRepository.findByUser(user)) {
+            if (!transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
+                throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
+            }
         }
-        if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.ACCEPTED).isEmpty() && !transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
-            throw new UnsupportedOperationException("users with pending or accepted transactions cannot be deleted");
+        //user with pending transactions cannot be deleted
+        if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
+            throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
         }
         userRepository.deleteById(id);
-    }
-
-    public User updateUser(Long id, User newUser) {
-        User existingUser = validateUserIdAndReturnUser(id);
-
-        existingUser.setUsername(newUser.getUsername());
-        existingUser.setPassword(newUser.getPassword());
-        existingUser.setEmail(newUser.getEmail());
-        existingUser.setUpdatedAt(LocalDateTime.now());
-
-        return userRepository.save(existingUser);
     }
 
     /*validates that a user exists in database, either casts exception or returns a User

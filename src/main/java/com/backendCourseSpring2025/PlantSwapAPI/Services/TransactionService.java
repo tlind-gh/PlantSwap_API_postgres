@@ -2,7 +2,6 @@ package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
 import com.backendCourseSpring2025.PlantSwapAPI.models.Transaction;
-import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.PlantAvailabilityStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.TransactionRepository;
@@ -43,7 +42,8 @@ public class TransactionService {
 
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
         //check that the plant for the transaction is available
-        if (plant.getAvailabilityStatus() != PlantAvailabilityStatusEnum.AVAILABLE) {
+        if (!transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.ACCEPTED).isEmpty()
+                && !transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
             throw new IllegalArgumentException("plant is reserved or not available");
         }
         //check that the user making the offer is not the owner of the plant
@@ -57,7 +57,7 @@ public class TransactionService {
 
         //set status for transaction and update status for plant (SWAP_PENDING/RESERVED or ACCEPTED/NOT_AVAILABLE, depending on if it is for swap or for sale)
         TransactionStatusEnum status = (plant.getPrice() == null) ? TransactionStatusEnum.SWAP_PENDING : TransactionStatusEnum.ACCEPTED;
-        updateTransactionAndPlantStatus(transaction, status);
+        transaction.setStatus(status);
 
         //sets createdAt and updatedAt timestamps, overriding any potential user input from RequestBody for these variables
         transaction.setCreatedAt(LocalDateTime.now());
@@ -75,8 +75,7 @@ public class TransactionService {
         //set statusEnum according to boolean input
         TransactionStatusEnum status = isAccepted ? TransactionStatusEnum.ACCEPTED : TransactionStatusEnum.SWAP_REJECTED;
 
-        //update transaction and plant status accordingly
-        updateTransactionAndPlantStatus(transaction, status);
+        transaction.setStatus(status);
         transaction.setUpdatedAt(LocalDateTime.now());
         return transactionRepository.save(transaction);
     }
@@ -112,10 +111,6 @@ public class TransactionService {
         if (transaction.getStatus() == TransactionStatusEnum.ACCEPTED) {
             throw new UnsupportedOperationException("accepted transaction cannot be deleted directly (delete the relevant plant to remove both plant and transaction)");
         }
-        //when deleting a pending transaction, the status of the plant is updated to available (same as if the swap is rejected)
-        if (transaction.getStatus() == TransactionStatusEnum.SWAP_PENDING) {
-            updateTransactionAndPlantStatus(transaction, TransactionStatusEnum.SWAP_REJECTED);
-        }
         transactionRepository.deleteById(id);
     }
 
@@ -133,19 +128,6 @@ public class TransactionService {
         if (transaction.getStatus() != TransactionStatusEnum.SWAP_PENDING || transaction.getSwapOffer() == null) {
             throw new IllegalArgumentException("Can only accept/reject transaction or alter swapOffer on transactions with status 'swap_pending'");
         }
-    }
-
-    //method for updating transaction and plant status.
-    private void updateTransactionAndPlantStatus(Transaction transaction, TransactionStatusEnum transactionStatus) {
-        transaction.setStatus(transactionStatus);
-        Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
-        switch (transactionStatus) {
-            case ACCEPTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.NOT_AVAILABLE);
-            case SWAP_PENDING -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.RESERVED);
-            case SWAP_REJECTED -> plant.setAvailabilityStatus(PlantAvailabilityStatusEnum.AVAILABLE);
-        }
-        plant.setUpdatedAt(LocalDateTime.now());
-        plantRepository.save(plant);
     }
 
 }

@@ -1,4 +1,5 @@
 # PlantSwap API
+# dont forget to update this doc
 
 **This is a REST API using Spring boot and postgres (and run via a Docker container). The application the backend part of a plantSwap service with which users can publish plant listings and acquire plant listed by other users.**
 
