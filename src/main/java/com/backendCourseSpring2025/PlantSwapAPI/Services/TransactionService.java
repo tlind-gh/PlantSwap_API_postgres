@@ -27,6 +27,11 @@ public class TransactionService {
 
     //create and add new transaction
     public Transaction createTransaction(Transaction transaction) {
+        //checks that user is not null for a new transaction
+        if (transaction.getBuyer() == null) {
+            throw new IllegalArgumentException("buyer id cannot be null for a new transaction");
+        }
+
         //check that user exists
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
             throw new NoSuchElementException("buyer id does not correspond to any existing user");

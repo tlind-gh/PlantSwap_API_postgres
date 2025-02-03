@@ -29,13 +29,13 @@
 ### Installation
 1. clone the repository and open your IDE of choice
     ```
-    git clone https://github.com/tlind-gh/BackendContext_assignment1_postgres.git
+    git clone https://github.com/tlind-gh/PlantSwap_API_postgres.git
     ```
 2. add a .env file (in the source folder) and copy-paste the code below into it (change relevant fields to the username and password for your postgres user)
     #### */.env*
     
     ```
-    POSTGRES_DB: plantSwap
+    POSTGRES_DB: PlantSwapAPI
     POSTGRES_USER: {your postgres username}
     POSTGRES_PASSWORD: {your postgres password}
     ```
@@ -46,7 +46,7 @@
     ```
     spring:
       datasource:
-        url: jdbc:postgresql://localhost:5432/plantSwap
+        url: jdbc:postgresql://localhost:5432/PlantSwapAPI
         username: {your postgres username}
         password: {your postgres password}
     jpa:
@@ -57,7 +57,7 @@
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     ```
-4. create and empty postgres database called "plantSwap" (e.g., using pgAdmin)
+4. create and empty postgres database called "PlantSwapAPI" (e.g., using pgAdmin)
 
 ### Usage
 1. start a detached instance of docker by running the "docker-compose up -d" command in the folder of the cloned repository

@@ -26,9 +26,8 @@ public class Transaction {
     private Plant plant;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "buyer_id", nullable = false, updatable = false)
-    @NotNull(message = "buyer id cannot be null")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "buyer_id")
     private User buyer;
 
     @Column(name = "status", nullable = false)
@@ -59,11 +58,11 @@ public class Transaction {
         this.plant = plant;
     }
 
-    public @NotNull(message = "buyer id cannot be null") User getBuyer() {
+    public User getBuyer() {
         return buyer;
     }
 
-    public void setBuyer(@NotNull(message = "buyer id cannot be null") User buyer) {
+    public void setBuyer(User buyer) {
         this.buyer = buyer;
     }
 
