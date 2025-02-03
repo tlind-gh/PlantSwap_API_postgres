@@ -34,9 +34,9 @@ public class PlantController {
         return new ResponseEntity<>(plantService.getPlantById(id), HttpStatus.OK);
     }
 
-    @GetMapping("user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<Plant>> getPlantByUserId(@PathVariable Long userId) {
-        return new ResponseEntity<>(plantService.getPlantByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<>(plantService.getPlantsByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("/available")

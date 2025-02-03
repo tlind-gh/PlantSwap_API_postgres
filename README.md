@@ -65,7 +65,7 @@
 2. run the PlantSwapPostgresApplication from your IDE
 3. test the application using Postman (/src/main/ contains json files with data that can be used for testing)
 
-***Link to Postman documentation:*** *https://documenter.getpostman.com/view/40787093/2sAYQiASYM*
+***Link to Postman documentation:*** *https://documenter.getpostman.com/view/40787093/2sAYX5KMiE*
 
 ---
 

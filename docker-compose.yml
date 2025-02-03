@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: plantSwap_postgres
     env_file:
       - .env
     ports:

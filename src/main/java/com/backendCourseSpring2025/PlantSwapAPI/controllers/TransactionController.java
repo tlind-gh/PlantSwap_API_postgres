@@ -34,7 +34,7 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.getTransactionById(id), HttpStatus.OK);
     }
 
-    @GetMapping("user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<Transaction>> getTransactionByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(transactionService.getTransactionsByUserId(userId), HttpStatus.OK);
     }

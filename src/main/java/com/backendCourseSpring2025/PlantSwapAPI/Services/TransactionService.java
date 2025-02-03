@@ -37,7 +37,7 @@ public class TransactionService {
         }
         //check that plant exists
         if (!plantRepository.existsById(transaction.getPlant().getId())) {
-            throw new NoSuchElementException("plant id does not correspond to any existing user");
+            throw new NoSuchElementException("plant id does not correspond to any existing plant");
         }
 
         Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());

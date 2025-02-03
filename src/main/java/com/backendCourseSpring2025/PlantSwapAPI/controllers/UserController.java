@@ -1,7 +1,6 @@
 package com.backendCourseSpring2025.PlantSwapAPI.controllers;
 
 import com.backendCourseSpring2025.PlantSwapAPI.Services.UserService;
-import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -33,11 +32,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/plants")
-    public ResponseEntity<List<Plant>> getUserPlants(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getPlantsByUserId(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

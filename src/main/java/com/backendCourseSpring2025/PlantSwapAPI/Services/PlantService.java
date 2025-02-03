@@ -61,7 +61,7 @@ public class PlantService {
     }
 
     //get all plants for a user using user id
-    public List<Plant> getPlantByUserId(Long userId) {
+    public List<Plant> getPlantsByUserId(Long userId) {
         return plantRepository.findByUser(userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("Id does not correspond to any existing user")));
     }
