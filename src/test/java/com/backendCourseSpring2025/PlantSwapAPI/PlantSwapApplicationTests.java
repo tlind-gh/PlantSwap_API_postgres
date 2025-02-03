@@ -1,10 +1,10 @@
-package com.backendContextAssignment1.plantSwap_postgres;
+package com.backendCourseSpring2025.PlantSwapAPI;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PlantSwapPostgresApplicationTests {
+class PlantSwapApplicationTests {
 
 	@Test
 	void contextLoads() {

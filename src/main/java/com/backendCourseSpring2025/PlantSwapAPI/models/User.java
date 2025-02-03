@@ -1,4 +1,4 @@
-package com.backendContextAssignment1.plantSwap_postgres.models;
+package com.backendCourseSpring2025.PlantSwapAPI.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

@@ -1,8 +1,8 @@
-package com.backendContextAssignment1.plantSwap_postgres.repositories;
+package com.backendCourseSpring2025.PlantSwapAPI.repositories;
 
-import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
-import com.backendContextAssignment1.plantSwap_postgres.models.User;
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
+import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
+import com.backendCourseSpring2025.PlantSwapAPI.models.User;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.PlantAvailabilityStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.backendContextAssignment1.plantSwap_postgres.models;
+package com.backendCourseSpring2025.PlantSwapAPI.models;
 
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatusEnum;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

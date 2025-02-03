@@ -1,4 +1,4 @@
-package com.backendContextAssignment1.plantSwap_postgres.exceptions;
+package com.backendCourseSpring2025.PlantSwapAPI.exceptions;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;

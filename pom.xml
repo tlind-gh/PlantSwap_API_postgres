@@ -8,11 +8,11 @@
 		<version>3.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.backendContextAssignment1</groupId>
-	<artifactId>PlantSwap_API</artifactId>
+	<groupId>com.backendCourseSpring2025</groupId>
+	<artifactId>PlantSwapAPI</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>plantSwap_postgres</name>
-	<description>Assigment1 in backend i ett sammanhang</description>
+	<name>PlantSwap_API</name>
+	<description>Assigment1 in backend course</description>
 	<url/>
 	<licenses>
 		<license/>

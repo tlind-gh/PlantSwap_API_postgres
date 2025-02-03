@@ -1,7 +1,7 @@
-package com.backendContextAssignment1.plantSwap_postgres.controllers;
+package com.backendCourseSpring2025.PlantSwapAPI.controllers;
 
-import com.backendContextAssignment1.plantSwap_postgres.Services.PlantService;
-import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
+import com.backendCourseSpring2025.PlantSwapAPI.Services.PlantService;
+import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

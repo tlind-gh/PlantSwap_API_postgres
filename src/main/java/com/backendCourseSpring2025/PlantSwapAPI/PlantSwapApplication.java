@@ -1,13 +1,13 @@
-package com.backendContextAssignment1.plantSwap_postgres;
+package com.backendCourseSpring2025.PlantSwapAPI;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlantSwapPostgresApplication {
+public class PlantSwapApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlantSwapPostgresApplication.class, args);
+		SpringApplication.run(PlantSwapApplication.class, args);
 	}
 
 }

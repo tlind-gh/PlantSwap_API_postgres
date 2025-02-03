@@ -1,12 +1,12 @@
-package com.backendContextAssignment1.plantSwap_postgres.Services;
+package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
-import com.backendContextAssignment1.plantSwap_postgres.models.Plant;
-import com.backendContextAssignment1.plantSwap_postgres.models.User;
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.PlantAvailabilityStatusEnum;
-import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.TransactionStatusEnum;
-import com.backendContextAssignment1.plantSwap_postgres.repositories.PlantRepository;
-import com.backendContextAssignment1.plantSwap_postgres.repositories.TransactionRepository;
-import com.backendContextAssignment1.plantSwap_postgres.repositories.UserRepository;
+import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
+import com.backendCourseSpring2025.PlantSwapAPI.models.User;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.PlantAvailabilityStatusEnum;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
+import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
+import com.backendCourseSpring2025.PlantSwapAPI.repositories.TransactionRepository;
+import com.backendCourseSpring2025.PlantSwapAPI.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

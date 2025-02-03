@@ -1,6 +1,7 @@
-package com.backendContextAssignment1.plantSwap_postgres.models;
+package com.backendCourseSpring2025.PlantSwapAPI.models;
 
 import com.backendContextAssignment1.plantSwap_postgres.models.supportClasses.*;
+import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.OnDelete;
