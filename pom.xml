@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.backendContextAssignment1</groupId>
-	<artifactId>plantSwap_postgres</artifactId>
+	<artifactId>PlantSwap_API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>plantSwap_postgres</name>
 	<description>Assigment1 in backend i ett sammanhang</description>
