@@ -1,6 +1,7 @@
 package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
+import com.backendCourseSpring2025.PlantSwapAPI.models.Transaction;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
 import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
@@ -29,6 +30,14 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(null);
         return userRepository.save(user);
+    }
+
+    public List<User> createMultipleUsers(List<User> userList) {
+        for (User user : userList) {
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(null);
+        }
+        return userRepository.saveAll(userList);
     }
 
     //update user, full body
@@ -68,6 +77,9 @@ public class UserService {
         //user with pending transactions cannot be deleted
         if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
             throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
+        }
+        for (Transaction t : transactionRepository.findByBuyer(user)) {
+            t.setBuyer(null);
         }
         userRepository.deleteById(id);
     }

@@ -12,7 +12,7 @@ Usernames and user email must be unique*/
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "username", unique = true, length = 50, nullable = false)
     @NotNull(message = "username cannot be null")
@@ -47,7 +47,7 @@ public class User {
     //no setter for id and createdAt, since these should never be modified
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

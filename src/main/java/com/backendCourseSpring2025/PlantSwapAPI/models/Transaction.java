@@ -17,15 +17,16 @@ status SWAP_PENDING (awaiting acceptance or rejection from the owner of the plan
 @Entity @Table(name = "transactions")
 public class Transaction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "plant_id", nullable = false, updatable = false)
     @NotNull(message = "plant id cannot be null")
     private Plant plant;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    //set to lazy to allow deletion of the user from the db w/o it persisting due to the link to a Transaction
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "buyer_id")
     private User buyer;
@@ -46,7 +47,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

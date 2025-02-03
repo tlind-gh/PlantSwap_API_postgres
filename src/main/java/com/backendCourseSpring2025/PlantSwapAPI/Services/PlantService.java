@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class PlantService {
@@ -97,7 +98,7 @@ public class PlantService {
         }
 
         //plants listing cannot change owner (plant can be swapped or sold, but the plant listing does not transfer owner)
-        if (newPlant.getUser().getId() != existingPlant.getUser().getId()) {
+        if (!Objects.equals(newPlant.getUser().getId(), existingPlant.getUser().getId())) {
             throw new IllegalArgumentException("user id cannot be updated");
         }
 

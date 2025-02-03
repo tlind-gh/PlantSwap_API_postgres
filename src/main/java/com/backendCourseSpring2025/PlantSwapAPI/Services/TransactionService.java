@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class TransactionService {
@@ -35,21 +36,21 @@ public class TransactionService {
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
             throw new NoSuchElementException("buyer id does not correspond to any existing user");
         }
-        //check that plant exists
-        if (!plantRepository.existsById(transaction.getPlant().getId())) {
-            throw new NoSuchElementException("plant id does not correspond to any existing plant");
-        }
+        //check that plant exists and save plant for further checks
+        Plant plant = plantRepository.findById(transaction.getPlant().getId())
+                .orElseThrow(() -> new NoSuchElementException("plant id does not correspond to any existing plant"));
 
-        Plant plant = plantRepository.getReferenceById(transaction.getPlant().getId());
         //check that the plant for the transaction is available
         if (!transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.ACCEPTED).isEmpty()
                 && !transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
             throw new IllegalArgumentException("plant is reserved or not available");
         }
+
         //check that the user making the offer is not the owner of the plant
-        if (transaction.getBuyer().getId() == plant.getUser().getId()) {
+        if (Objects.equals(transaction.getBuyer().getId(), plant.getUser().getId())) {
            throw new IllegalArgumentException("buyer id cannot be the same as user id for the owner of the plant for the transaction");
         }
+
         //check that transaction has swapOffer if the plant has swapConditions (or does not have swapOffer, if the plant is for sale and not swap)
         if (plant.getPrice() == null && transaction.getSwapOffer() == null || plant.getPrice() != null && transaction.getSwapOffer() != null) {
             throw new IllegalArgumentException("transaction for plants with swap conditions must have a swap offer, transaction for plants with a price must NOT have a swap offer");
