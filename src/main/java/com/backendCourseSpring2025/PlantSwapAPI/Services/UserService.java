@@ -71,9 +71,9 @@ public class UserService {
                 throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
             }
         }
-        //user with pending transactions or accepted transactions cannot be deleted
+        //user with pending or accepted transactions cannot be deleted
         if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty() || !transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.ACCEPTED).isEmpty()) {
-            throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
+            throw new UnsupportedOperationException("users with pending or accepted transactions cannot be deleted");
         }
 
         userRepository.deleteById(id);

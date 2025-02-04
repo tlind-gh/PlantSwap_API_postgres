@@ -49,15 +49,21 @@ public class GlobalExceptionHandler {
     not spring, but hibernate error, since it is a database constraint and not an annotation*/
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception exception) {
-        String ErrorMessage;
-        if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("username")) {
-            ErrorMessage = "Username is already registered to another user in the database (username must be unique)";
-        } else if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("email")) {
-            ErrorMessage = "Email is already registered to another user in the database (email must be unique)";
+
+        String ErrorMessage = "Invalid input argument(s):\n -%s is already registered to another user in the database (%s must be unique)";
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+        if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("Key (username)")) {
+            ErrorMessage = String.format(ErrorMessage, "Username", "username");
+
+        } else if (exception.getCause() instanceof ConstraintViolationException && exception.getMessage().contains("Key (email)")) {
+            ErrorMessage = String.format(ErrorMessage, "Email", "email");
+
         } else {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             ErrorMessage = "Unexpected server error (see detailed message below):\n\n" +exception.getMessage();
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage);
+        return ResponseEntity.status(httpStatus).body(ErrorMessage);
     }
 
 }
