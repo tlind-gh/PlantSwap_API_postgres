@@ -19,16 +19,16 @@ public class Transaction {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "plant_id", nullable = false, updatable = false)
     @NotNull(message = "plant id cannot be null")
     private Plant plant;
 
     //set to lazy to allow deletion of the user from the db w/o it persisting due to the link to a Transaction
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JoinColumn(name = "buyer_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "buyer_id", nullable = false, updatable = false)
     private User buyer;
 
     @Column(name = "status", nullable = false)

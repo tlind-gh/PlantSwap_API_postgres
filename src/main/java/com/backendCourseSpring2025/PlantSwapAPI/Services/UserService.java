@@ -1,7 +1,6 @@
 package com.backendCourseSpring2025.PlantSwapAPI.Services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
-import com.backendCourseSpring2025.PlantSwapAPI.models.Transaction;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
 import com.backendCourseSpring2025.PlantSwapAPI.models.supportClasses.TransactionStatusEnum;
 import com.backendCourseSpring2025.PlantSwapAPI.repositories.PlantRepository;
@@ -34,10 +33,9 @@ public class UserService {
 
     public List<User> createMultipleUsers(List<User> userList) {
         for (User user : userList) {
-            user.setCreatedAt(LocalDateTime.now());
-            user.setUpdatedAt(null);
+            createUser(user);
         }
-        return userRepository.saveAll(userList);
+        return userList;
     }
 
     //update user, full body
@@ -64,8 +62,7 @@ public class UserService {
 
 
     /*delete a user using user id
-    NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant.
-    Transaction directly tied to the user are not deleted (buyer set to null instead)*/
+    NB! delete type = cascade: also deletes the plants belonging to the user and the transactions for that plant*/
     public void deleteUserById(Long id) {
         User user = validateUserIdAndReturnUser(id);
         //users with pending or accepted transaction, or plants with pending transactions cannot be deleted.
@@ -74,13 +71,11 @@ public class UserService {
                 throw new UnsupportedOperationException("users with plants with pending transactions cannot be deleted");
             }
         }
-        //user with pending transactions cannot be deleted
-        if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
+        //user with pending transactions or accepted transactions cannot be deleted
+        if (!transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.SWAP_PENDING).isEmpty() || !transactionRepository.findByBuyerAndStatus(user, TransactionStatusEnum.ACCEPTED).isEmpty()) {
             throw new UnsupportedOperationException("users with pending transactions cannot be deleted");
         }
-        for (Transaction t : transactionRepository.findByBuyer(user)) {
-            t.setBuyer(null);
-        }
+
         userRepository.deleteById(id);
     }
 

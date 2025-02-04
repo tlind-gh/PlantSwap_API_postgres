@@ -36,13 +36,14 @@ public class TransactionService {
         if (!userRepository.existsById(transaction.getBuyer().getId())) {
             throw new NoSuchElementException("buyer id does not correspond to any existing user");
         }
+
         //check that plant exists and save plant for further checks
         Plant plant = plantRepository.findById(transaction.getPlant().getId())
                 .orElseThrow(() -> new NoSuchElementException("plant id does not correspond to any existing plant"));
 
         //check that the plant for the transaction is available
         if (!transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.ACCEPTED).isEmpty()
-                && !transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
+                || !transactionRepository.findByPlantAndStatus(plant, TransactionStatusEnum.SWAP_PENDING).isEmpty()) {
             throw new IllegalArgumentException("plant is reserved or not available");
         }
 
@@ -65,6 +66,13 @@ public class TransactionService {
         transaction.setUpdatedAt(null);
 
         return transactionRepository.save(transaction);
+    }
+
+    public List<Transaction> createMultipleTransactions(List<Transaction> transactionList) {
+        for (Transaction transaction : transactionList) {
+            createTransaction(transaction);
+        }
+        return transactionList;
     }
 
     //method for both rejecting and accepting pending transactions, depending on boolean input argument

@@ -51,6 +51,13 @@ public class PlantService {
         return plantRepository.save(plant);
     }
 
+    public List<Plant> createMultiplePlants(List<Plant> plantList) {
+        for (Plant plant : plantList) {
+            createPlant(plant);
+        }
+        return plantList;
+    }
+
     //get all plants in database
     public List<Plant> getAllPlants() {
         return plantRepository.findAll();
