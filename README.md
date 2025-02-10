@@ -5,6 +5,8 @@
 
 **The application is called PlantSwap, but does actually allow for both selling and swapping plants (let's pretend that the platform started as a place for users to swap plants, and then added a functionality for selling plants but kept the name plantSwap)**
 
+***Made for a school assigment spring 2025***
+
 ---
 ## Table of Content
 1. Getting started
@@ -15,9 +17,7 @@
    1. General description
    2. Detailed application rules 
    3. Limitations 
-   4. Possible improvements 
-3. Additional info
-   1. Retired Transactions PUT methods
+   4. Possible improvements
 
 ---
 
@@ -107,9 +107,9 @@ Transaction that which contain swap offers must be accepted by the owner of the 
 - The buyer must NOT be the same user as owns the plant (i.e., purchasing ones own plant is not allowed)
 - A transaction linked to a plant with a swap condition must have a swap offer
 - A transaction linked to a plant with a price must NOT have a swap offer
-- Transactions for plants with a price are set to accepted automatically (and the plant is set to not available), since the price has been met
-- Transaction for plants for swap are set as pending (and plant is set to reserved), as the swap offer must be accepted (or rejected) by the owner of the plant as well
-- Swap offers of pending transactions can be edited, should the "buyer" want to update/change their offer
+- Transactions for plants with a price are set to accepted automatically, since the price has been met
+- Transaction for plants for swap are set as pending, as the swap offer must be accepted (or rejected) by the owner of the plant as well
+- Swap offers of pending transactions can be edited, should the buyer want to update/change their offer
 - Accepted transaction cannot be deleted (this is to preserve the data of the transaction for as long as the plant is still in the database, and not have not_available plants w/o transactions)
 
 **All models**
@@ -123,56 +123,7 @@ Transaction that which contain swap offers must be accepted by the owner of the 
 
 ### Possible improvements
 - Implementing hash and salting of the user password data
-- Removing the availabilityStatus from the plant class, since this is currently corresponds to the status of the transactions for the plant (i.e., if there is a pending transaction the plant status is always reserved). Therefor this is technically double storing of availability status data in the database, and this variable could be removed from the database without loosing any information.  
 - Limiting the common name and scientific names for the plants to actual plants (e.g., by importing data from an external database)
   - If this was implemented the common name and scientific names should (for proper database normalization) be replaced by a single field with a foreign key in the plants database table, which is a reference to a plant_species table with all the plant name information.
-- Move the getPlantsbyUserId to the plantService class, since the method is for getting data from the plants table and should logically be in th PlantService class (alternatively move the getTransactionsByUserID to the UserService class, to be consistent)
 - Allow for deleting a user with accepted transactions and set user field to null for these transactions
   - This would mean changing the cascade setting for deleting and also allowing null for the buyer_id field in the transaction table
-
----
-
-## Additional info
-
-### Retired Transaction PUT methods
-The follow Transaction methods (in TransactionService and TransactionController) was removed after it became superfluous
-due to the addition of three patch-methods (for updating the SwapOffer, or rejecting/accepting a Transaction). These patch methods
-cover all utilities of the update put-method, since the update method did not allow for updating the plant or user id.
-
-#### *TransactionService class method*
-```
-  public Transaction updateTransaction(Long id, Transaction newTransaction) {
-      
-      Transaction existingTransaction = validateTransactionIdAndReturnTransaction(id);
-      
-      if (newTransaction.getPlant().getId() != existingTransaction.getPlant().getId() || newTransaction.getBuyer().getId() != existingTransaction.getBuyer().getId()) {
-          throw new IllegalArgumentException("plant id and buyer id cannot be changed");
-      }
-
-      if (existingTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING && existingTransaction.getStatus() != newTransaction.getStatus()) {
-          throw new IllegalArgumentException("status of accepted or rejected transactions cannot be changed");
-      }
-
-      if ((existingTransaction.getSwapOffer() == null && newTransaction.getSwapOffer() != null) || (existingTransaction.getSwapOffer() != null && newTransaction.getSwapOffer() == null)) {
-          throw new IllegalArgumentException("swap offer cannot be added to transaction for a non-swappable plant and swap offer cannot be deleted from swappable plant");
-      }
-
-      //if status is updated from pending to accepted or rejected, then update the plant status
-      if (existingTransaction.getStatus() == TransactionStatusEnum.SWAP_PENDING && newTransaction.getStatus() != TransactionStatusEnum.SWAP_PENDING) {
-          updateTransactionAndPlantStatus(existingTransaction, newTransaction.getStatus());
-      }
-
-      existingTransaction.setSwapOffer(newTransaction.getSwapOffer());
-      existingTransaction.setUpdatedAt(LocalDateTime.now());
-
-      return transactionRepository.save(existingTransaction);
-  }
-```
-
-#### *TransactionController class method*
-```
-@PutMapping("/{id}")
-public ResponseEntity<Transaction> updateTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
-   return new ResponseEntity<>(transactionService.updateTransaction(id, transaction), HttpStatus.OK);
-}
-```
