@@ -4,8 +4,6 @@
 
 **The application is called PlantSwap, but does actually allow for both selling and swapping plants (let's pretend that the platform started as a place for users to swap plants, and then added a functionality for selling plants but kept the name plantSwap)**
 
-***Made for a school assigment spring 2025***
-
 ---
 ## Table of Content
 1. Getting started
