@@ -1,6 +1,6 @@
 package com.backendCourseSpring2025.PlantSwapAPI.controllers;
 
-import com.backendCourseSpring2025.PlantSwapAPI.Services.UserService;
+import com.backendCourseSpring2025.PlantSwapAPI.services.UserService;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

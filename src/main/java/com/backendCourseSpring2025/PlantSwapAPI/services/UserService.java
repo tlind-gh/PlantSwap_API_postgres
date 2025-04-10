@@ -1,4 +1,4 @@
-package com.backendCourseSpring2025.PlantSwapAPI.Services;
+package com.backendCourseSpring2025.PlantSwapAPI.services;
 
 import com.backendCourseSpring2025.PlantSwapAPI.models.Plant;
 import com.backendCourseSpring2025.PlantSwapAPI.models.User;
