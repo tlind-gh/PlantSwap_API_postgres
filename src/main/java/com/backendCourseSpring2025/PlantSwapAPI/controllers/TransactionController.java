@@ -24,11 +24,6 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.createTransaction(transaction), HttpStatus.CREATED);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<Transaction>> addMultipleTransactions(@Valid @RequestBody List<Transaction> transactionList) {
-        return new ResponseEntity<>(transactionService.createMultipleTransactions(transactionList), HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {
         return new ResponseEntity<>(transactionService.getAllTransactions(), HttpStatus.OK);
