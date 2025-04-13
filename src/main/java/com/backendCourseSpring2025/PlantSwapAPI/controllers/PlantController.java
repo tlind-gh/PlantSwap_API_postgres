@@ -24,11 +24,6 @@ public class PlantController {
         return new ResponseEntity<>(plantService.createPlant(plant), HttpStatus.CREATED);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<Plant>> addMultiplePlants(@Valid @RequestBody List<Plant> plantList) {
-        return new ResponseEntity<>(plantService.createMultiplePlants(plantList), HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<Plant>> getAllPlants() {
         return new ResponseEntity<>(plantService.getAllPlants(), HttpStatus.OK);

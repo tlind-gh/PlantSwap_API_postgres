@@ -20,6 +20,7 @@
 
 ## Getting started
 ### Prerequisites
+- Maven
 - postgreSQL
 - Docker
 - Postman
@@ -69,7 +70,7 @@
 ## Functionality
 
 ### General description
-The application is a REST API using Spring boot and postgreSQL. The application lacks a frontend implementation and is best tested using Postman or equivalent.
+The application is a Spring boot REST API with Maven using a PostgreSQL database. The application is backend-only and is best experiences using the Postman documentation linked in the earlier part of this document.
 
 The application has three main model classes: 1) User, 2) Plant and 3) Transaction. An instance of the User class represent a registered user on the plantSwap service. An instance of the Plant class represents a plant listing posted by a user. An instance of the Transaction class represents an offer on an plant listing by a user on the platform. 
 

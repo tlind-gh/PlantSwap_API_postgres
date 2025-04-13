@@ -24,11 +24,6 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<User>> addMultipleUsers(@Valid @RequestBody List<User> userList) {
-        return new ResponseEntity<>(userService.createMultipleUsers(userList), HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);

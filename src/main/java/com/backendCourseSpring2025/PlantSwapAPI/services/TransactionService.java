@@ -68,13 +68,6 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> createMultipleTransactions(List<Transaction> transactionList) {
-        for (Transaction transaction : transactionList) {
-            createTransaction(transaction);
-        }
-        return transactionList;
-    }
-
     //method for both rejecting and accepting pending transactions, depending on boolean input argument
     public Transaction updateTransactionStatus(Long id, boolean isAccepted) {
         Transaction transaction = validateTransactionIdAndReturnTransaction(id);
